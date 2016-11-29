@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- '4.1'
+script:
+- nexe  -i index.js -o rungs
+deploy:
+  provider: releases
+  api_key:
+    secure: V44WY7LrWU7aHgsTGM2qfJ4C/dENvw1QELqaGqL4wjW/Za6UlSCZgi0F4V81+1QxvTbr6ec90rBn2mx+JP4iQb1go1Vyhn8tuX7oBsbmlPLkAy8tt7VCaAHtiTpm9spM+j6Wn07Ok6IHnyV0CGKkV+She2+obfxUJAt+ocK9DQzxO0KSVgkunZi+xZGk2z75mEf0Rwx0hgTStTWs6dgzVSK01EXQV4tERRJFqWl/u2H7CXNup4/pARBZhPPJPEpI1HR/fynWB/HS+rHnMCVbhmskdciWXlPXnnXXsC+zyHZ3vOu5zH+oHGel/Z/vuAVvnBetio+1oqw99Hfl/zCfhuXK0g4q49v8EOfgwkic5gxYuYlF2wqPjBQpiioLSe8/pdZsnpBoFWDuqsNBzrJ4yrGirxgvl9iHRiePHpOv/rKTZrhGAo/mX7z+djlL6tXCsSWF8EzM992G8u2LRQQkTuWwt5nzVMrVFxluHMn4TuNCcunxYQFHiHmAoz3YAiOdnCBEQRD5HEdHs0YaHGwd95CC9MP0KnfK+xBbXJtUMDMhIs9N18f4VK4+VA9kxbpHy7YpUUhAtVKrdTv03SNGFqUW1fwq4WudRHgcktmXRvanPmE5dvlnf2mBsNDwvfnalvXjvZmZq9gL3o4K9ih9YQ8IFs9rrLcjrCiaYk0oG60=
+  file: rungs
+  on:
+    repo: mumuki/rungs
