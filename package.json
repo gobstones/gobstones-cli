@@ -2,9 +2,9 @@
   "name": "rungs",
   "version": "1.0.0",
   "description": "gs-weblang-core native wrapper",
-  "main": "sample.js",
+  "main": "index.js",
   "dependencies": {
-    "gs-weblang-core": "^0.4.0"
+    "gs-weblang-core": "github:gobstones/gs-weblang-core#9489e2f467b74db8d59439ae0993f9f90cb38e6c"
   },
   "devDependencies": {},
   "scripts": {
