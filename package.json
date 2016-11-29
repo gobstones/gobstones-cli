@@ -1,0 +1,23 @@
+{
+  "name": "rungs",
+  "version": "1.0.0",
+  "description": "gs-weblang-core native wrapper",
+  "main": "sample.js",
+  "dependencies": {
+    "gs-weblang-core": "^0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mumuki/rungs.git"
+  },
+  "author": "Franco Leonardo Bulgarelli",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mumuki/rungs/issues"
+  },
+  "homepage": "https://github.com/mumuki/rungs#readme"
+}
