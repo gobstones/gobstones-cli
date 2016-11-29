@@ -2,6 +2,7 @@ language: node_js
 node_js:
 - '4.1'
 script:
+- npm install nexe -g
 - nexe  -i index.js -o rungs
 deploy:
   provider: releases
