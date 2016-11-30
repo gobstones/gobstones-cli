@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/mumuki/rungs.svg?branch=master)](https://travis-ci.org/mumuki/rungs)
-
 # rungs
 > Native wrapper for gobstones/gs-weblang-core
 
