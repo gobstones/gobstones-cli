@@ -15,7 +15,7 @@ reporter.run = function(code, initialBoard, format) {
     if (ast.length === 0) throw new NoProgramsFoundError();
     ast = ast[0];
   } catch (err) {
-    return this._buildError(function() {
+    return this._tryToDo(function() {
       return {
         status: "compilation_error",
         result: this._buildCompilationError(err)
@@ -23,8 +23,19 @@ reporter.run = function(code, initialBoard, format) {
     }.bind(this));
   }
 
+  var board;
+  if (initialBoard !== undefined) {
+    this._tryToDo(function() {
+      board = gsWeblangCore.gbb.reader.fromString(initialBoard);
+    });
+  }
+
   try {
-    var board = ast.interpret(new Context()).board();
+    var context = new Context();
+    if (board !== undefined)
+      context.currentBoard = board;
+
+    var board = ast.interpret(context).board();
     board.table = format === "gbb"
       ? gsWeblangCore.gbb.builder.build(board)
       : board.toView();
@@ -34,14 +45,14 @@ reporter.run = function(code, initialBoard, format) {
       result: board
     }
   } catch (err) {
-    return this._buildError(function() {
+    return this._tryToDo(function() {
       return {
         status: "runtime_error",
         result: this._buildRuntimeError(err)
       };
     }.bind(this));
   }
-}
+};
 
 reporter._buildCompilationError = function(error) {
   if (!error.on || !error.error) throw error;
@@ -50,16 +61,16 @@ reporter._buildCompilationError = function(error) {
     on: error.on,
     message: error.error
   }
-}
+};
 
 reporter._buildRuntimeError = function(error) {
   if (!error.on || error.message) throw error;
 
   error.on = error.on.token;
   return _.pick(error, "on", "message");
-}
+};
 
-reporter._buildError = function(builder) {
+reporter._tryToDo = function(action) {
   try {
     return builder()
   } catch (err) {
@@ -70,5 +81,6 @@ reporter._buildError = function(builder) {
       moreDetail: err.message
     }
   }
-}
+};
+
 module.exports = reporter
