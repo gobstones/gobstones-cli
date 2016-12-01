@@ -1,7 +1,7 @@
 var gsWeblangCore = require("gs-weblang-core/umd/index.umd");
 var Context = gsWeblangCore.Context;
 var parser = gsWeblangCore.getParser();
-_ = require("lodash");
+var _ = require("lodash");
 
 var NoProgramsFoundError = function() { }
 NoProgramsFoundError.prototype = new Error("No programs found");
@@ -20,12 +20,12 @@ reporter.run = function(code, initialBoard, format) {
         status: "compilation_error",
         result: this._buildCompilationError(err)
       };
-    });
+    }.bind(this));
   }
 
   try {
     var board = ast.interpret(new Context()).board();
-    board.table = format == "gbb"
+    board.table = format === "gbb"
       ? gsWeblangCore.gbb.builder.build(board)
       : board.toView();
 
@@ -39,11 +39,13 @@ reporter.run = function(code, initialBoard, format) {
         status: "runtime_error",
         result: this._buildRuntimeError(err)
       };
-    });
+    }.bind(this));
   }
 }
 
 reporter._buildCompilationError = function(error) {
+  if (!error.on || !error.error) throw error;
+
   return {
     on: error.on,
     message: error.error
@@ -51,6 +53,8 @@ reporter._buildCompilationError = function(error) {
 }
 
 reporter._buildRuntimeError = function(error) {
+  if (!error.on || error.message) throw error;
+
   error.on = error.on.token;
   return _.pick(error, "on", "message");
 }

@@ -4,10 +4,37 @@ CLI for the Gobstones interpreter
 ## Install
 
 ```bash
-npm install -g gs-weblang-cli
+sudo npm install -g gs-weblang-cli
 ```
 
-## Examples
+## Usage
+
+```bash
+gbs --help
+```
+
+### Batch process
+
+`request.json`:
+```json
+[
+  {
+    "initialBoard": "GBB...",
+    "code": "program {\n ..."
+  },
+  {
+    "initialBoard": "GBB...",
+    "code": "program {\n ..."
+  },
+]
+```
+
+```bash
+gbs --batch request.json
+# returns an array with the responses
+```
+
+## Examples of inputs and outputs
 
 ### passed
 
@@ -102,9 +129,9 @@ gbs /tmp/gobs.gbs
 
 ```json
 {
-  "status": "all_is_broken",
+  "status": "all_is_broken_error",
   "message": "Something has gone very wrong",
   "detail": {},
-  "moreDetail": "this._buildCompilationError is not a function"
+  "moreDetail": "Cannot read property 'range' of null"
 }
 ```
