@@ -22,7 +22,7 @@ reporter.run = function(code, initialBoard, format) {
   if (initialBoard !== undefined) {
     try {
       var board = gsWeblangCore.gbb.reader.fromString(initialBoard);
-      context.currentBoard = board;
+      _.assign(context.board(), board);
     } catch (err) {
       return this._buildUnknownError(err);
     }
