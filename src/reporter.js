@@ -25,9 +25,11 @@ reporter.run = function(code, initialBoard, format) {
 
   var board;
   if (initialBoard !== undefined) {
-    this._tryToDo(function() {
+    try {
       board = gsWeblangCore.gbb.reader.fromString(initialBoard);
-    });
+    } catch (err) {
+      return this._buildUnknownError(err);
+    }
   }
 
   try {
@@ -70,16 +72,20 @@ reporter._buildRuntimeError = function(error) {
   return _.pick(error, "on", "message");
 };
 
+reporter._buildUnknownError = function(error) {
+  return {
+    status: "all_is_broken_error",
+    message: "Something has gone very wrong",
+    detail: error,
+    moreDetail: error.message
+  }
+};
+
 reporter._tryToDo = function(action) {
   try {
-    return builder()
+    return action()
   } catch (err) {
-    return {
-      status: "all_is_broken_error",
-      message: "Something has gone very wrong",
-      detail: err,
-      moreDetail: err.message
-    }
+    return this._buildUnknownError(err);
   }
 };
 
