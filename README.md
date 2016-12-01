@@ -31,7 +31,26 @@ gbs /tmp/gobs.gbs
 ```
 
 ```json
-
+{
+  "status": "compilation_error",
+  "result": {
+    "on": {
+      "range": {
+        "start": {
+          "row": 0,
+          "column": 1
+        },
+        "end": {
+          "row": 0,
+          "column": 10
+        }
+      },
+      "value": "programita",
+      "arity": "name"
+    },
+    "message": "Se esperaba una definición de programa, función o procedimiento."
+  }
+}
 ```
 
 ### runtime_error

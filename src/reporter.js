@@ -41,8 +41,8 @@ reporter.run = function(code, initialBoard, format) {
 
 reporter._buildCompilationError = function(error) {
   return {
-    message: error.error,
     on: error.on
+    message: error.error
   }
 }
 
