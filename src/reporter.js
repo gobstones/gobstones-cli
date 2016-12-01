@@ -3,17 +3,12 @@ var Context = gsWeblangCore.Context;
 var parser = gsWeblangCore.getParser();
 var _ = require("lodash");
 
-var NoProgramsFoundError = function() { }
-NoProgramsFoundError.prototype = new Error("No programs found");
-
 var reporter = {}
 
 reporter.run = function(code, initialBoard, format) {
   var ast;
   try {
-    ast = parser.parseProgram(code);
-    if (ast.length === 0) throw new NoProgramsFoundError();
-    ast = ast[0];
+    ast = parser.parseProgram(code)[0];
   } catch (err) {
     return this._tryToDo(function() {
       return {
