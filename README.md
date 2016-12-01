@@ -1,6 +1,12 @@
 # gs-weblang-cli
 CLI for the Gobstones interpreter
 
+## Install
+
+```bash
+npm install -g gs-weblang-cli
+```
+
 ## Examples
 
 ### passed
@@ -82,5 +88,23 @@ gbs /tmp/gobs.gbs
     },
     "message": "El procedimiento Ponerrrrr no se encuentra definido."
   }
+}
+```
+
+### all_is_broken_error
+
+This one **shouldn't** happen very often, but for now... :sweat_smile:
+
+```bash
+echo "" > /tmp/gobs.gbs
+gbs /tmp/gobs.gbs
+```
+
+```json
+{
+  "status": "all_is_broken",
+  "message": "Something has gone very wrong",
+  "detail": {},
+  "moreDetail": "this._buildCompilationError is not a function"
 }
 ```

@@ -15,10 +15,12 @@ reporter.run = function(code, initialBoard, format) {
     if (ast.length === 0) throw new NoProgramsFoundError();
     ast = ast[0];
   } catch (err) {
-    return {
-      status: "compilation_error",
-      result: this._buildCompilationError(err)
-    }
+    return this._buildError(function() {
+      return {
+        status: "compilation_error",
+        result: this._buildCompilationError(err)
+      };
+    });
   }
 
   try {
@@ -32,16 +34,18 @@ reporter.run = function(code, initialBoard, format) {
       result: board
     }
   } catch (err) {
-    return {
-      status: "runtime_error",
-      result: this._buildRuntimeError(err)
-    }
+    return this._buildError(function() {
+      return {
+        status: "runtime_error",
+        result: this._buildRuntimeError(err)
+      };
+    });
   }
 }
 
 reporter._buildCompilationError = function(error) {
   return {
-    on: error.on
+    on: error.on,
     message: error.error
   }
 }
@@ -51,4 +55,16 @@ reporter._buildRuntimeError = function(error) {
   return _.pick(error, "on", "message");
 }
 
+reporter._buildError = function(builder) {
+  try {
+    return builder()
+  } catch (err) {
+    return {
+      status: "all_is_broken_error",
+      message: "Something has gone very wrong",
+      detail: err,
+      moreDetail: err.message
+    }
+  }
+}
 module.exports = reporter
