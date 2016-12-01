@@ -18,20 +18,17 @@ reporter.run = function(code, initialBoard, format) {
     }.bind(this));
   }
 
-  var board;
+  var context = new Context();
   if (initialBoard !== undefined) {
     try {
-      board = gsWeblangCore.gbb.reader.fromString(initialBoard);
+      var board = gsWeblangCore.gbb.reader.fromString(initialBoard);
+      context.currentBoard = board;
     } catch (err) {
       return this._buildUnknownError(err);
     }
   }
 
   try {
-    var context = new Context();
-    if (board !== undefined)
-      context.currentBoard = board;
-
     var board = ast.interpret(context).board();
     board.table = format === "gbb"
       ? gsWeblangCore.gbb.builder.build(board)
