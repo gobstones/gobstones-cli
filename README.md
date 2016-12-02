@@ -155,21 +155,19 @@ gobs --ast /tmp/gobs.gbs
 ```
 
 ```json
-[
-  {
-    "alias": "program",
-    "body": [
-      {
-        "arity": "statement",
-        "alias": "Drop",
-        "parameters": [
-          {
-            "value": 0,
-            "alias": "Blue"
-          }
-        ]
-      }
-    ]
-  }
-]
+{
+  "alias": "program",
+  "body": [
+    {
+      "arity": "statement",
+      "alias": "Drop",
+      "parameters": [
+        {
+          "value": 0,
+          "alias": "Blue"
+        }
+      ]
+    }
+  ]
+}
 ```

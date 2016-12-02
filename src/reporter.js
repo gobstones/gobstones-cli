@@ -6,37 +6,18 @@ var _ = require("lodash");
 var reporter = {}
 
 reporter.getAst = function(code) {
-  return JSON.stringify(parser.parseProgram(code), astReplacer, 2);
+  var ast = this._compile(code);
+  return JSON.stringify(ast, astReplacer, 2);
 };
 
 reporter.run = function(code, initialBoard, format) {
-  var ast;
-  try {
-    ast = parser.parseProgram(code)[0];
-  } catch (err) {
-    return this._tryToDo(function() {
-      return {
-        status: "compilation_error",
-        result: this._buildCompilationError(err)
-      };
-    }.bind(this));
-  }
+  var ast = this._compile(code);
 
-  var context = new Context();
-  if (initialBoard !== undefined) {
-    try {
-      var board = gsWeblangCore.gbb.reader.fromString(initialBoard);
-      _.assign(context.board(), board);
-    } catch (err) {
-      return this._buildUnknownError(err);
-    }
-  }
+  var context = this._createContext(initialBoard);
 
   try {
     var board = ast.interpret(context).board();
-    board.table = format === "gbb"
-      ? gsWeblangCore.gbb.builder.build(board)
-      : board.toView();
+    this._formatBoard(board, format);
 
     return {
       status: "passed",
@@ -50,6 +31,40 @@ reporter.run = function(code, initialBoard, format) {
       };
     }.bind(this));
   }
+};
+
+reporter._compile = function(code) {
+  try {
+    return parser.parseProgram(code)[0];
+  } catch (err) {
+    return this._tryToDo(function() {
+      return {
+        status: "compilation_error",
+        result: this._buildCompilationError(err)
+      };
+    }.bind(this));
+  }
+};
+
+reporter._createContext = function(initialBoard) {
+  var context = new Context();
+
+  if (initialBoard !== undefined) {
+    try {
+      var board = gsWeblangCore.gbb.reader.fromString(initialBoard);
+      _.assign(context.board(), board);
+    } catch (err) {
+      return this._buildUnknownError(err);
+    }
+  }
+
+  return context;
+};
+
+reporter._formatBoard = function(board, format) {
+  board.table = format === "gbb"
+    ? gsWeblangCore.gbb.builder.build(board)
+    : board.toView();
 };
 
 reporter._buildCompilationError = function(error) {
