@@ -8,7 +8,7 @@
     "url": "git+https://github.com/rodri042/gs-weblang-cli.git"
   },
   "bin": {
-    "gbs": "bin/gbs"
+    "gobs": "bin/gobs"
   },
   "author": "Rodrigo Alfonso",
   "license": "ISC",

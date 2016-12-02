@@ -4,7 +4,18 @@ CLI for the Gobstones interpreter
 ## Install
 
 ```bash
+# requires node > 4
 sudo npm install -g gs-weblang-cli
+```
+
+## Building wrapper
+
+The cli can be wrapped as an executable using [nexe](https://github.com/jaredallard/nexe): `npm install nexe -g`.
+
+```
+git clone https://github.com/gobstones/gs-weblang-cli gobs
+cd gobs
+nexe -i src/index.js -o gobs
 ```
 
 ## Usage
