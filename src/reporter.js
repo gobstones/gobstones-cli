@@ -1,9 +1,13 @@
 var gsWeblangCore = require("gs-weblang-core/umd/index.umd");
 var Context = gsWeblangCore.Context;
 var parser = gsWeblangCore.getParser();
+var astReplacer = require("./ast-replacer");
 var _ = require("lodash");
-
 var reporter = {}
+
+reporter.getAst = function(code) {
+  return JSON.stringify(parser.parseProgram(code), astReplacer, 2);
+};
 
 reporter.run = function(code, initialBoard, format) {
   var ast;

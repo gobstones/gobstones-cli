@@ -10,37 +10,16 @@ sudo npm install -g gs-weblang-cli
 ## Usage
 
 ```bash
-gbs --help
+gobs --help
 ```
 
-### Batch process
+### Run
 
-`request.json`:
-```json
-[
-  {
-    "initialBoard": "GBB...",
-    "code": "program {\n ..."
-  },
-  {
-    "initialBoard": "GBB...",
-    "code": "program {\n ..."
-  },
-]
-```
-
-```bash
-gbs --batch request.json
-# returns an array with the responses
-```
-
-## Examples of inputs and outputs
-
-### passed
+#### passed
 
 ```bash
 echo "program {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gbs /tmp/gobs.gbs -f gbb
+gobs /tmp/gobs.gbs -f gbb
 ```
 
 ```json
@@ -56,11 +35,11 @@ gbs /tmp/gobs.gbs -f gbb
 }
 ```
 
-### compilation_error
+#### compilation_error
 
 ```bash
 echo "programita {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gbs /tmp/gobs.gbs
+gobs /tmp/gobs.gbs
 ```
 
 ```json
@@ -86,11 +65,11 @@ gbs /tmp/gobs.gbs
 }
 ```
 
-### runtime_error
+#### runtime_error
 
 ```bash
 echo "program {\n Ponerrrrrrr(Rojo)\n }" > /tmp/gobs.gbs
-gbs /tmp/gobs.gbs
+gobs /tmp/gobs.gbs
 ```
 
 ```json
@@ -118,13 +97,13 @@ gbs /tmp/gobs.gbs
 }
 ```
 
-### all_is_broken_error
+#### all_is_broken_error
 
 This one **shouldn't** happen very often, but for now... :sweat_smile:
 
 ```bash
 echo "" > /tmp/gobs.gbs
-gbs /tmp/gobs.gbs
+gobs /tmp/gobs.gbs
 ```
 
 ```json
@@ -134,4 +113,52 @@ gbs /tmp/gobs.gbs
   "detail": {},
   "moreDetail": "Cannot read property 'range' of null"
 }
+```
+
+### Batch run
+
+`request.json`:
+```json
+[
+  {
+    "initialBoard": "GBB...",
+    "code": "program {\n ..."
+  },
+  {
+    "initialBoard": "GBB...",
+    "code": "program {\n ..."
+  },
+]
+```
+
+```bash
+gobs --batch request.json
+# returns an array with the responses
+```
+
+### Generate AST
+
+```bash
+echo "program {\n Poner(Azul)\n }" > /tmp/gobs.gbs
+gobs --ast /tmp/gobs.gbs
+```
+
+```json
+[
+  {
+    "alias": "program",
+    "body": [
+      {
+        "arity": "statement",
+        "alias": "Drop",
+        "parameters": [
+          {
+            "value": 0,
+            "alias": "Blue"
+          }
+        ]
+      }
+    ]
+  }
+]
 ```

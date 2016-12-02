@@ -2,6 +2,11 @@ var reporter = require("./reporter");
 var _ = require("lodash");
 
 module.exports = {
+  "ast": function(config) {
+    var code = getFile(config.argv[0]);
+    console.log(reporter.getAst(code));
+  },
+
   "batch": function(config) {
     var json = getFile(config.options.batch);
     var batch = getBatch(json);
