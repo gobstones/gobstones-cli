@@ -12,7 +12,6 @@ reporter.getAst = function(code) {
 
 reporter.run = function(code, initialBoard, format) {
   var ast = this._compile(code);
-
   var context = this._createContext(initialBoard);
 
   try {
@@ -24,12 +23,10 @@ reporter.run = function(code, initialBoard, format) {
       result: board
     }
   } catch (err) {
-    return this._tryToDo(function() {
-      return {
-        status: "runtime_error",
-        result: this._buildRuntimeError(err)
-      };
-    }.bind(this));
+    throw {
+      status: "runtime_error",
+      result: this._buildRuntimeError(err)
+    };
   }
 };
 
@@ -37,12 +34,10 @@ reporter._compile = function(code) {
   try {
     return parser.parseProgram(code)[0];
   } catch (err) {
-    return this._tryToDo(function() {
-      return {
-        status: "compilation_error",
-        result: this._buildCompilationError(err)
-      };
-    }.bind(this));
+    throw {
+      status: "compilation_error",
+      result: this._buildCompilationError(err)
+    };
   }
 };
 
@@ -50,12 +45,8 @@ reporter._createContext = function(initialBoard) {
   var context = new Context();
 
   if (initialBoard !== undefined) {
-    try {
-      var board = gsWeblangCore.gbb.reader.fromString(initialBoard);
-      _.assign(context.board(), board);
-    } catch (err) {
-      return this._buildUnknownError(err);
-    }
+    var board = gsWeblangCore.gbb.reader.fromString(initialBoard);
+    _.assign(context.board(), board);
   }
 
   return context;
@@ -77,27 +68,10 @@ reporter._buildCompilationError = function(error) {
 };
 
 reporter._buildRuntimeError = function(error) {
-  if (!error.on || error.message) throw error;
+  if (!error.on || !error.message) throw error;
 
   error.on = error.on.token;
   return _.pick(error, "on", "message");
-};
-
-reporter._buildUnknownError = function(error) {
-  return {
-    status: "all_is_broken_error",
-    message: "Something has gone very wrong",
-    detail: error,
-    moreDetail: error.message
-  }
-};
-
-reporter._tryToDo = function(action) {
-  try {
-    return action()
-  } catch (err) {
-    return this._buildUnknownError(err);
-  }
 };
 
 module.exports = reporter

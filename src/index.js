@@ -36,4 +36,16 @@ function callAction() {
   )(config, options);
 }
 
-callAction();
+try {
+  callAction();
+} catch(err) {
+  var error = (err.status) ? err : {
+    status: "all_is_broken_error",
+    message: "Something has gone very wrong",
+    detail: err,
+    moreDetail: err.message
+  };
+
+  console.log(JSON.stringify(error, null, 2));
+  process.exit(1);
+}
