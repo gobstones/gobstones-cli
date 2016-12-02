@@ -15,7 +15,7 @@ options.setHelp(
   "gbs file.gbs\n" +
   "gbs file.gbs --format gbb\n" +
   "gbs --initial_board board.gbb\n" +
-  "gbs batch=request.json\n" +
+  "gbs --batch=request.json\n" +
   "gbs --ast file.gbb\n" +
   "\n" + "[[OPTIONS]]"
 );
