@@ -8,6 +8,12 @@ CLI for the Gobstones interpreter
 sudo npm install -g gs-weblang-cli
 ```
 
+## Run tests
+
+```bash
+npm test
+```
+
 ## Building wrapper
 
 The cli can be wrapped as an executable using [nexe](https://github.com/jaredallard/nexe): `npm install nexe -g`.
@@ -79,7 +85,7 @@ gobs /tmp/gobs.gbs
 #### runtime_error
 
 ```bash
-echo "program {\n Ponerrrrrrr(Rojo)\n }" > /tmp/gobs.gbs
+echo "program {\n Ponerrrrr(Rojo)\n }" > /tmp/gobs.gbs
 gobs /tmp/gobs.gbs
 ```
 
