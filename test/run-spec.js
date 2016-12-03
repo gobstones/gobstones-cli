@@ -103,25 +103,31 @@ describe("run", function() {
   });
 
   describe("AST generation", function() {
+    var program = "program {\n Poner(Azul)\n }";
+    var ast = {
+      "alias": "program",
+      "body": [
+        {
+          "arity": "statement",
+          "alias": "Drop",
+          "parameters": [
+            {
+              "value": 0,
+              "alias": "Blue"
+            }
+          ]
+        }
+      ]
+    };
 
     it("can generate the AST of a program", function() {
-      var output = exec("program {\n Poner(Azul)\n }", "--ast");
-      output.should.eql({
-        "alias": "program",
-        "body": [
-          {
-            "arity": "statement",
-            "alias": "Drop",
-            "parameters": [
-              {
-                "value": 0,
-                "alias": "Blue"
-              }
-            ]
-          }
-        ]
-      });
+      var output = exec(program, "--ast");
+      output.should.eql(ast);
     });
 
+    it("can take the program from stdin", function() {
+      var output = exec(program, "--ast --from_stdin", true);
+      output.should.eql(ast);
+    });
   });
 });

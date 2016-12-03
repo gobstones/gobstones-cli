@@ -1,13 +1,13 @@
 var fs = require("fs");
 var exec = require('child_process').execSync;
 
-module.exports = function(program, arguments) {
+module.exports = function(program, arguments, fromStdin) {
   if (!arguments) arguments = "";
 
   fs.writeFileSync("/tmp/gobs.gbs", program);
   var output;
   try {
-    output = exec(__dirname + "/../bin/gs-weblang-cli /tmp/gobs.gbs " + arguments).toString();
+    output = exec(getCommand(program, arguments, fromStdin)).toString();
   } catch(err) {
     var error = err.output.toString();
     output = error.substring(error.indexOf("{"), error.lastIndexOf("}") + 1);
@@ -20,4 +20,12 @@ module.exports = function(program, arguments) {
     error.output = output;
     throw error;
   }
+}
+
+var getCommand = function(program, arguments, fromStdin) {
+  var path = "/../bin/gs-weblang-cli";
+
+  return fromStdin
+    ? 'echo "' + program + '" | ' + __dirname + path + " " + arguments
+    : __dirname + path + " /tmp/gobs.gbs " + arguments
 }

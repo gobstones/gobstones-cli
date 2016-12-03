@@ -3,8 +3,9 @@ var _ = require("lodash");
 
 module.exports = {
   "ast": function(config) {
-    var code = getFile(config.argv[0]);
-    console.log(reporter.getAst(code));
+    withCode(function(code) {
+      console.log(reporter.getAst(code));
+    });
   },
 
   "batch": function(config) {
@@ -19,14 +20,15 @@ module.exports = {
   },
 
   "run": function(config) {
-    var code = getFile(config.argv[0]);
-    var initialBoard;
-    if (config.options.initial_board !== undefined)
-      initialBoard = getFile(config.options.initial_board);
+    withCode(function(code) {
+      var initialBoard;
+      if (config.options.initial_board !== undefined)
+        initialBoard = getFile(config.options.initial_board);
 
-    report(
-      reporter.run(code, initialBoard, config.options.format)
-    );
+      report(
+        reporter.run(code, initialBoard, config.options.format)
+      );
+    });
   },
 
   "version": function() {
@@ -44,6 +46,23 @@ module.exports = {
   }
 };
 
+var withCode = function(action) {
+  if (!config.options.from_stdin) {
+    action(getFile(config.argv[0]));
+    return;
+  }
+
+  var code = "";
+  process.stdin.setEncoding("utf8");
+  process.stdin.on("readable", function() {
+    var chunk = process.stdin.read();
+    if (chunk !== null) code += chunk;
+  });
+  process.stdin.on("end", function() {
+    action(code);
+  });
+};
+
 var getReport = function(code, initialBoard, format) {
   JSON.stringify(
     reporter.run(code, initialBoard, format)
@@ -58,7 +77,7 @@ var getFile = function(fileName) {
   try {
     return require("fs").readFileSync(fileName).toString();
   } catch (err) {
-    console.log("The file " + fileName + " must exist.");
+    console.log("The file " + (fileName || "?") + " must exist.");
     process.exit(1);
   }
 };
