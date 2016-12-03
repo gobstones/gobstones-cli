@@ -5,7 +5,7 @@ var options = getopt.create([
   ["n", "from_stdin", "Take the code from stdin."],
   ["i", "initial_board=BOARD", "Initial board to use. Default: Empty 9x9."],
   ["b", "batch=BATCH", "File with array of { initialBoard, code } to process."],
-  ["a", "ast", "Print the AST of the program"],
+  ["a", "ast", "Print the AST of the program."],
   ["f", "format=FORMAT", "Format of the final board (gbb or array). Default: array."],
   ["v", "version", "Display the version."],
   ["h", "help", "Display this help."]
