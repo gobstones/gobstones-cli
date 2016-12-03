@@ -158,7 +158,7 @@ gs-weblang-cli --batch request.json
 ### Generate AST
 
 ```bash
-echo "program {\n Poner(Azul)\n }" | ./bin/gs-weblang-cli --ast --from_stdin
+echo "program {\n Poner(Azul)\n }" | gs-weblang-cli --ast --from_stdin
 ```
 
 ```json
