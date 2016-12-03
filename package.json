@@ -8,7 +8,7 @@
     "url": "git+https://github.com/gobstones/gs-weblang-cli.git"
   },
   "bin": {
-    "gobs": "bin/gobs"
+    "gs-weblang-cli": "bin/gs-weblang-cli"
   },
   "author": "Rodrigo Alfonso",
   "license": "ISC",
@@ -22,6 +22,6 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "test" : "mocha ./test/run-spec.js" }
+    "test" : "./node_modules/mocha/bin/mocha ./test/run-spec.js"
   }
 }

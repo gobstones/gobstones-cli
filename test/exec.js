@@ -7,7 +7,7 @@ module.exports = function(program, arguments) {
   fs.writeFileSync("/tmp/gobs.gbs", program);
   var output;
   try {
-    output = exec(__dirname + "/../bin/gobs /tmp/gobs.gbs " + arguments).toString();
+    output = exec(__dirname + "/../bin/gs-weblang-cli /tmp/gobs.gbs " + arguments).toString();
   } catch(err) {
     var error = err.output.toString();
     output = error.substring(error.indexOf("{"), error.lastIndexOf("}") + 1);

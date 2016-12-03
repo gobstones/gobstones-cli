@@ -19,15 +19,15 @@ npm test
 The cli can be wrapped as an executable using [nexe](https://github.com/jaredallard/nexe): `npm install nexe -g`.
 
 ```
-git clone https://github.com/gobstones/gs-weblang-cli gobs
-cd gobs
-nexe -i src/index.js -o gobs
+git clone https://github.com/gobstones/gs-weblang-cli
+cd gs-weblang-cli
+nexe -i src/index.js -o gs-weblang-cli
 ```
 
 ## Usage
 
 ```bash
-gobs --help
+gs-weblang-cli --help
 ```
 
 ### Run
@@ -36,7 +36,7 @@ gobs --help
 
 ```bash
 echo "program {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gobs /tmp/gobs.gbs -f gbb
+gs-weblang-cli /tmp/gobs.gbs -f gbb
 ```
 
 ```json
@@ -56,7 +56,7 @@ gobs /tmp/gobs.gbs -f gbb
 
 ```bash
 echo "programita {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gobs /tmp/gobs.gbs
+gs-weblang-cli /tmp/gobs.gbs
 ```
 
 ```json
@@ -86,7 +86,7 @@ gobs /tmp/gobs.gbs
 
 ```bash
 echo "program {\n Ponerrrrr(Rojo)\n }" > /tmp/gobs.gbs
-gobs /tmp/gobs.gbs
+gs-weblang-cli /tmp/gobs.gbs
 ```
 
 ```json
@@ -120,7 +120,7 @@ This one **shouldn't** happen very often, but for now... :sweat_smile:
 
 ```bash
 echo "" > /tmp/gobs.gbs
-gobs /tmp/gobs.gbs
+gs-weblang-cli /tmp/gobs.gbs
 ```
 
 ```json
@@ -149,7 +149,7 @@ gobs /tmp/gobs.gbs
 ```
 
 ```bash
-gobs --batch request.json
+gs-weblang-cli --batch request.json
 # returns an array with the responses
 ```
 
@@ -157,7 +157,7 @@ gobs --batch request.json
 
 ```bash
 echo "program {\n Poner(Azul)\n }" > /tmp/gobs.gbs
-gobs --ast /tmp/gobs.gbs
+gs-weblang-cli --ast /tmp/gobs.gbs
 ```
 
 ```json
