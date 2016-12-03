@@ -32,7 +32,7 @@ reporter.run = function(code, initialBoard, format) {
 
 reporter._compile = function(code) {
   try {
-    return parser.parseProgram(code)[0];
+    return parser.parse(code).program;
   } catch (err) {
     throw {
       status: "compilation_error",
