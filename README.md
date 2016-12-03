@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/gobstones/gs-weblang-cli.svg?branch=master)](https://travis-ci.org/gobstones/gs-weblang-cli)
+
 # gs-weblang-cli
 CLI for the Gobstones interpreter
 
