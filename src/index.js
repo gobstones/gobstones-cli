@@ -15,7 +15,7 @@ options.setHelp(
   "Examples of usage:\n" +
   "gs-weblang-cli file.gbs\n" +
   "gs-weblang-cli --initial_board board.gbb\n" +
-  "gs-weblang-cli --batch=request.json\n" +
+  "gs-weblang-cli --batch request.json\n" +
   "gs-weblang-cli --ast --from_stdin\n" +
   "\n" + "[[OPTIONS]]"
 );
