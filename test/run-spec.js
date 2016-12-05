@@ -129,5 +129,49 @@ describe("run", function() {
       var output = exec(program, "--ast --from_stdin", true);
       output.should.eql(ast);
     });
+
   });
+
+  describe("Batch execution", function() {
+    var program = "program {\n Poner(Azul)\n }";
+    var ast = {
+      "alias": "program",
+      "body": [
+        {
+          "arity": "statement",
+          "alias": "Drop",
+          "parameters": [
+            {
+              "value": 0,
+              "alias": "Blue"
+            }
+          ]
+        }
+      ]
+    };
+
+    it("returns a report with the result of each execution", function() {
+      var output = exec(program, "--format gbb --batch " + __dirname + "/fixture/batch.json");
+      output.should.eql([
+        {
+          "status": "passed",
+          "result": {
+            "x": 0,
+            "y": 1,
+            "sizeX": 2,
+            "sizeY": 2,
+            "table": "GBB/1.0\r\nsize 2 2\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 1\r\n"
+          }
+        },
+        {
+          "status": "runtime_error",
+          "result": {
+            "message": "Te caiste del tablero por: x=0 y=0"
+          }
+        }
+      ]);
+    });
+
+  });
+
 });

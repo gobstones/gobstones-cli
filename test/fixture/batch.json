@@ -1,0 +1,10 @@
+[
+  {
+    "initialBoard": "GBB/1.0\nsize 2 2\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\nhead 0 0",
+    "code": "program {\n Mover(Norte)\n }"
+  },
+  {
+    "initialBoard": "GBB/1.0\nsize 1 1\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\nhead 0 0",
+    "code": "program {\n Mover(Norte)\n }"
+  }
+]

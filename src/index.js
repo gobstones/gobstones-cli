@@ -1,5 +1,6 @@
 var getopt = require("node-getopt");
 var actions = require("./actions");
+var safeRun = require("./safe-run");
 
 var options = getopt.create([
   ["n", "from_stdin", "Take the code from stdin."],
@@ -36,16 +37,7 @@ function callAction() {
   )(config, options);
 }
 
-try {
-  callAction();
-} catch(err) {
-  var error = (err.status) ? err : {
-    status: "all_is_broken_error",
-    message: "Something has gone very wrong",
-    detail: err,
-    moreDetail: err.message
-  };
-
+safeRun(callAction, function(error) {
   console.log(JSON.stringify(error, null, 2));
   process.exit(1);
-}
+});

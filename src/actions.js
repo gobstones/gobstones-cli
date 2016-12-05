@@ -1,4 +1,5 @@
 var reporter = require("./reporter");
+var safeRun = require("./safe-run");
 var _ = require("lodash");
 
 module.exports = {
@@ -14,7 +15,9 @@ module.exports = {
 
     report(
       batch.map(function(it) {
-        return reporter.run(it.code, it.initialBoard, config.options.format)
+        return safeRun(function() {
+          return reporter.run(it.code, it.initialBoard, config.options.format);
+        });
       })
     );
   },
