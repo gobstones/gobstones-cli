@@ -19,9 +19,10 @@ module.exports = {
           var format = "all";
 
           var report = reporter.run(it.code, it.initialBoard, format);
-          return _.assign(report, {
+          _.assign(report.result, {
             initialBoard: reporter.getBoardFromGbb(it.initialBoard, format)
           });
+          return report;
         });
       })
     );

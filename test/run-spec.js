@@ -156,6 +156,45 @@ describe("run", function() {
         {
           "status": "passed",
           "result": {
+            "initialBoard": {
+              "x": 0,
+              "y": 0,
+              "sizeX": 2,
+              "sizeY": 2,
+              "table": {
+                "gbb": "GBB/1.0\r\nsize 2 2\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n",
+                "json": [
+                  [
+                    {
+                      "blue": 0,
+                      "red": 0,
+                      "black": 0,
+                      "green": 0
+                    },
+                    {
+                      "blue": 0,
+                      "red": 0,
+                      "black": 0,
+                      "green": 0
+                    }
+                  ],
+                  [
+                    {
+                      "blue": 0,
+                      "red": 1,
+                      "black": 0,
+                      "green": 0
+                    },
+                    {
+                      "blue": 0,
+                      "red": 0,
+                      "black": 0,
+                      "green": 0
+                    }
+                  ]
+                ]
+              }
+            },
             "x": 0,
             "y": 1,
             "sizeX": 2,
@@ -194,45 +233,6 @@ describe("run", function() {
               ]
             }
           },
-          "initialBoard": {
-            "x": 0,
-            "y": 0,
-            "sizeX": 2,
-            "sizeY": 2,
-            "table": {
-              "gbb": "GBB/1.0\r\nsize 2 2\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n",
-              "json": [
-                [
-                  {
-                    "blue": 0,
-                    "red": 0,
-                    "black": 0,
-                    "green": 0
-                  },
-                  {
-                    "blue": 0,
-                    "red": 0,
-                    "black": 0,
-                    "green": 0
-                  }
-                ],
-                [
-                  {
-                    "blue": 0,
-                    "red": 1,
-                    "black": 0,
-                    "green": 0
-                  },
-                  {
-                    "blue": 0,
-                    "red": 0,
-                    "black": 0,
-                    "green": 0
-                  }
-                ]
-              ]
-            }
-          }
         },
         {
           "status": "runtime_error",
