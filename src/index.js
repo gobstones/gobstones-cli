@@ -5,7 +5,7 @@ var safeRun = require("./safe-run");
 var options = getopt.create([
   ["n", "from_stdin", "Take the code from stdin."],
   ["i", "initial_board=BOARD", "Initial board to use. Default: Empty 9x9."],
-  ["b", "batch=BATCH", "Process a batch request: an array of { initialBoard, code }."],
+  ["b", "batch=BATCH", "Process a batch request: an array of { initialBoard, [extraBoard], code }."],
   ["a", "ast", "Print the AST of the program."],
   ["f", "format=FORMAT", "Format of the final board table (gbb|json|all). Default: json."],
   ["v", "version", "Display the version."],

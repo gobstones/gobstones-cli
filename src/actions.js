@@ -19,9 +19,16 @@ module.exports = {
           var format = "all";
 
           var report = reporter.run(it.code, it.initialBoard, format);
-          _.assign(report.result, {
-            initialBoard: reporter.getBoardFromGbb(it.initialBoard, format)
-          });
+          if (report.status === "passed") {
+            report.result = {
+              initialBoard: reporter.getBoardFromGbb(it.initialBoard, format),
+              finalBoard: report.result
+            };
+
+            if (!_.isUndefined(it.extraBoard))
+              report.result.extraBoard = reporter.getBoardFromGbb(it.extraBoard, format);
+          }
+
           return report;
         });
       })
@@ -31,7 +38,7 @@ module.exports = {
   "run": function(config) {
     withCode(function(code) {
       var initialBoard;
-      if (config.options.initial_board !== undefined)
+      if (!_.isUndefined(config.options.initial_board))
         initialBoard = getFile(config.options.initial_board);
 
       report(
@@ -101,11 +108,11 @@ var getBatch = function(json) {
   }
 
   var requestsAreValid = _.every(batch, function(it) {
-    return _.isString(it.initialBoard) && _.isString(it.code);
+    return _.isString(it.initialBoard) && _.isString(it.code) && (_.isUndefined(it.extraBoard) || _.isString(it.extraBoard));
   });
 
   if (!requestsAreValid) {
-    console.log("Some requests of the batch are invalid. The format is: { initialBoard, code }.");
+    console.log("Some requests of the batch are invalid. The format is: { initialBoard, [extraBoard], code }.");
     process.exit(1);
   }
 

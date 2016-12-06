@@ -51,7 +51,7 @@ reporter._compile = function(code) {
 reporter._createContext = function(initialBoard) {
   var context = new Context();
 
-  if (initialBoard !== undefined) {
+  if (!_.isUndefined(initialBoard)) {
     var board = this._readGbb(initialBoard);
     _.assign(context.board(), board);
   }
