@@ -16,7 +16,12 @@ module.exports = {
     report(
       batch.map(function(it) {
         return safeRun(function() {
-          return reporter.run(it.code, it.initialBoard, config.options.format);
+          var format = "all";
+
+          var report = reporter.run(it.code, it.initialBoard, format);
+          return _.assign(report, {
+            initialBoard: reporter.getBoardFromGbb(it.initialBoard, format)
+          });
         });
       })
     );
