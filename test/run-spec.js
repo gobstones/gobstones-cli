@@ -66,9 +66,9 @@ describe("run", function() {
       });
     });
 
-    it("should return a runtime error if the program does boom", function() {
-      var output = exec("program {\Ponerrrrr(Rojo)\n}");
-      output.should.eql({
+    describe("runtime errors", function() {
+
+      var runtimeError = {
         "status": "runtime_error",
         "result": {
           "on": {
@@ -87,7 +87,18 @@ describe("run", function() {
           },
           "message": "El procedimiento Ponerrrrr no se encuentra definido."
         }
+      };
+
+      it("should return a runtime error if the program does boom", function() {
+        var output = exec("program {\Ponerrrrr(Rojo)\n}");
+        output.should.eql(runtimeError);
       });
+
+      it("should report the errors well when reading from stdin", function() {
+        var output = exec("program {\Ponerrrrr(Rojo)\n}", "--from_stdin", true);
+        output.should.eql(runtimeError);
+      });
+
     });
 
     it("should catch unexpected errors", function() {
@@ -258,6 +269,20 @@ describe("run", function() {
         {
           "status": "runtime_error",
           "result": {
+            "on": {
+              "arity": "operator",
+              "range": {
+                "end": {
+                  "column": 7,
+                  "row": 1
+                },
+                "start": {
+                  "column": 7,
+                  "row": 1
+                }
+              },
+              "value": "("
+            },
             "message": "Te caiste del tablero por: x=0 y=0"
           }
         }

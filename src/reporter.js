@@ -91,7 +91,7 @@ reporter._buildCompilationError = function(error) {
 reporter._buildRuntimeError = function(error) {
   if (!error.on || !error.message) throw error;
 
-  error.on = error.on.token;
+  error.on = error.on.token || error.on;
   return _.pick(error, "on", "message");
 };
 

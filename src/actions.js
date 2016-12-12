@@ -1,5 +1,6 @@
 var reporter = require("./reporter");
 var safeRun = require("./safe-run");
+var fs = require("fs");
 var _ = require("lodash");
 
 module.exports = {
@@ -68,15 +69,7 @@ var withCode = function(action) {
     return;
   }
 
-  var code = "";
-  process.stdin.setEncoding("utf8");
-  process.stdin.on("readable", function() {
-    var chunk = process.stdin.read();
-    if (chunk !== null) code += chunk;
-  });
-  process.stdin.on("end", function() {
-    action(code);
-  });
+  action(fs.readFileSync("/dev/stdin").toString());
 };
 
 var getReport = function(code, initialBoard, format) {
