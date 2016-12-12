@@ -85,7 +85,11 @@ describe("run", function() {
             "value": "Ponerrrrr",
             "arity": "name"
           },
-          "message": "El procedimiento Ponerrrrr no se encuentra definido."
+          "message": "El procedimiento Ponerrrrr no se encuentra definido.",
+          "reason": {
+            "code": "undefined_procedure",
+            "detail": "Ponerrrrr"
+          }
         }
       };
 
@@ -283,7 +287,11 @@ describe("run", function() {
               },
               "value": "("
             },
-            "message": "Te caiste del tablero por: x=0 y=0"
+            "message": "Te caíste del tablero por: x=0 y=0",
+            "reason": {
+              "code": "out_of_board",
+              "detail": { "x": 0, "y": 0 }
+            }
           }
         }
       ]);

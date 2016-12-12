@@ -95,23 +95,13 @@ gs-weblang-cli /tmp/gobs.gbs
 {
   "status": "runtime_error",
   "result": {
-    "on": {
-      "token": {
-        "range": {
-          "start": {
-            "row": 1,
-            "column": 2
-          },
-          "end": {
-            "row": 1,
-            "column": 10
-          }
-        },
-        "value": "Ponerrrrr",
-        "arity": "name"
-      }
+    "on": ...
     },
-    "message": "El procedimiento Ponerrrrr no se encuentra definido."
+    "message": "El procedimiento Ponerrrrr no se encuentra definido.",
+    "reason": {
+      "code": "undefined_procedure",
+      "detail": "Ponerrrrr"
+    }
   }
 }
 ```

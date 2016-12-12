@@ -89,10 +89,10 @@ reporter._buildCompilationError = function(error) {
 };
 
 reporter._buildRuntimeError = function(error) {
-  if (!error.on || !error.message) throw error;
+  if (!error.on || !error.message || !error.reason) throw error;
 
   error.on = error.on.token || error.on;
-  return _.pick(error, "on", "message");
+  return _.pick(error, "on", "message", "reason");
 };
 
 module.exports = reporter
