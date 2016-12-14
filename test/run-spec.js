@@ -148,25 +148,8 @@ describe("run", function() {
   });
 
   describe("Batch execution", function() {
-    var program = "program {\n Poner(Azul)\n }";
-    var ast = {
-      "alias": "program",
-      "body": [
-        {
-          "arity": "statement",
-          "alias": "Drop",
-          "parameters": [
-            {
-              "value": 0,
-              "alias": "Blue"
-            }
-          ]
-        }
-      ]
-    };
-
     it("returns a report with the result of each execution", function() {
-      var output = exec(program, "--format gbb --batch " + __dirname + "/fixture/batch.json");
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch.json");
       output.should.eql([
         {
           "status": "passed",
@@ -273,24 +256,45 @@ describe("run", function() {
         {
           "status": "runtime_error",
           "result": {
-            "on": {
-              "arity": "operator",
-              "range": {
-                "end": {
-                  "column": 7,
-                  "row": 1
-                },
-                "start": {
-                  "column": 7,
-                  "row": 1
-                }
-              },
-              "value": "("
+            "initialBoard": {
+              "x": 0,
+              "y": 0,
+              "sizeX": 1,
+              "sizeY": 1,
+              "table": {
+                "gbb": "GBB/1.0\r\nsize 1 1\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n",
+                "json": [
+                  [
+                    {
+                      "blue": 0,
+                      "red": 1,
+                      "black": 0,
+                      "green": 0
+                    }
+                  ]
+                ]
+              }
             },
-            "message": "Te caíste del tablero por: x=0 y=0",
-            "reason": {
-              "code": "out_of_board",
-              "detail": { "x": 0, "y": 0 }
+            "finalBoardError": {
+              "on": {
+                "arity": "operator",
+                "range": {
+                  "end": {
+                    "column": 7,
+                    "row": 1
+                  },
+                  "start": {
+                    "column": 7,
+                    "row": 1
+                  }
+                },
+                "value": "("
+              },
+              "message": "Te caíste del tablero por: x=0 y=0",
+              "reason": {
+                "code": "out_of_board",
+                "detail": { "x": 0, "y": 0 }
+              }
             }
           }
         }

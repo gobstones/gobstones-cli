@@ -16,21 +16,22 @@ module.exports = {
 
     report(
       batch.map(function(it) {
+        var format = "all";
+
+        var initialBoard = safeRun(function() {
+          return reporter.getBoardFromGbb(it.initialBoard, format);
+        }, abort);
+
+        var extraBoard = !_.isUndefined(it.extraBoard)
+          ? safeRun(function() {
+            return reporter.getBoardFromGbb(it.extraBoard, format);
+          }, abort) : undefined;
+
         return safeRun(function() {
-          var format = "all";
-
           var report = reporter.run(it.code, it.initialBoard, format);
-          if (report.status === "passed") {
-            report.result = {
-              initialBoard: reporter.getBoardFromGbb(it.initialBoard, format),
-              finalBoard: report.result
-            };
-
-            if (!_.isUndefined(it.extraBoard))
-              report.result.extraBoard = reporter.getBoardFromGbb(it.extraBoard, format);
-          }
-
-          return report;
+          return makeBatchReport(report, initialBoard, extraBoard);
+        }, function(error) {
+          return makeBatchReport(error, initialBoard, extraBoard, "finalBoardError");
         });
       })
     );
@@ -110,4 +111,19 @@ var getBatch = function(json) {
   }
 
   return batch;
+};
+
+var makeBatchReport = function(report, initialBoard, extraBoard, finalBoardKey) {
+  var result = {
+    initialBoard: initialBoard,
+    extraBoard: extraBoard
+  };
+  result[finalBoardKey || "finalBoard"] = report.result;
+  report.result = result;
+
+  return report;
+}
+var abort = function(error) {
+  report(error);
+  process.exit();
 };
