@@ -19,6 +19,11 @@ describe("run", function() {
       });
     });
 
+    it("should inform the exit status of a program", function() {
+      var output = exec("program {\nreturn(8)\n}");
+      output.result.exitStatus.should.equal(8);
+    });
+
     it("should return an array board if the format is not specified", function() {
       var output = exec("program {\nPoner(Rojo)\n}");
       _.isArray(output.result.table).should.be.ok;

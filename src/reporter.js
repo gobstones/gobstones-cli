@@ -16,7 +16,7 @@ reporter.run = function(code, initialBoard, format) {
 
   try {
     var board = this._buildBoard(
-      ast.interpret(context).board(),
+      this._interpret(ast, context),
       format
     );
 
@@ -46,6 +46,13 @@ reporter._compile = function(code) {
       result: this._buildCompilationError(err)
     };
   }
+};
+
+reporter._interpret = function(ast, context) {
+  var newContext = ast.interpret(context);
+  var board = newContext.board();
+  board.exitStatus = newContext.exitStatus;
+  return board;
 };
 
 reporter._createContext = function(initialBoard) {
