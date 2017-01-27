@@ -1,4 +1,4 @@
-var should = require('chai').should();
+should = require("should");
 var fs = require("fs");
 var exec = require("./exec");
 var _ = require("lodash");
@@ -10,7 +10,7 @@ describe("run", function() {
     it("should return a gbb board if the format is gbb", function() {
       var output = exec("program {\nPoner(Rojo)\n}", "--format gbb");
       output.status.should.equal("passed");
-      output.result.should.eql({
+      output.result.should.containDeepOrdered({
         x: 0,
         y: 0,
         sizeX: 9,
@@ -31,7 +31,7 @@ describe("run", function() {
 
     it("should respect the initial board if it is specified", function() {
       var output = exec("program {\nMover(Norte)\n}", "--initial_board=" + __dirname + "/fixture/initialBoard.gbb");
-      output.result.should.eql({
+      output.result.should.containDeepOrdered({
         x: 0,
         y: 1,
         sizeX: 2,
@@ -49,7 +49,7 @@ describe("run", function() {
 
     it("should return a compilation error if the program does not compile", function() {
       var output = exec("programita {\nPoner(Rojo)\n}");
-      output.should.eql({
+      output.should.containDeepOrdered({
         "status": "compilation_error",
         "result": {
           "on": {
@@ -112,7 +112,7 @@ describe("run", function() {
 
     it("should catch unexpected errors", function() {
       var output = exec("");
-      output.should.eql({
+      output.should.containDeepOrdered({
         "status": "all_is_broken_error",
         "message": "Something has gone very wrong",
         "detail": {},
@@ -155,7 +155,7 @@ describe("run", function() {
   describe("Batch execution", function() {
     it("returns a report with the result of each execution", function() {
       var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch.json");
-      output.should.eql([
+      output.should.containDeepOrdered([
         {
           "status": "passed",
           "result": {

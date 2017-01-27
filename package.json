@@ -1,6 +1,6 @@
 {
   "name": "gs-weblang-cli",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "CLI for Gobstones",
   "main": "src/cli.js",
   "repository": {
@@ -19,9 +19,10 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "should": "^11.1.2"
   },
   "scripts": {
-    "test" : "./node_modules/mocha/bin/mocha ./test/run-spec.js"
+    "test": "./node_modules/mocha/bin/mocha ./test/run-spec.js"
   }
 }
