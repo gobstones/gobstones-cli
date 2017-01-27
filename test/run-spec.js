@@ -124,7 +124,7 @@ describe("run", function() {
 
   describe("AST generation", function() {
     var program = "program {\n Poner(Azul)\n }";
-    var ast = {
+    var ast = [{
       "alias": "program",
       "body": [
         {
@@ -138,7 +138,7 @@ describe("run", function() {
           ]
         }
       ]
-    };
+    }];
 
     it("can generate the AST of a program", function() {
       var output = exec(program, "--ast");

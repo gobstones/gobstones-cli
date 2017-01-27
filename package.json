@@ -1,6 +1,6 @@
 {
   "name": "gs-weblang-cli",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "CLI for Gobstones",
   "main": "src/cli.js",
   "repository": {

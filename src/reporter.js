@@ -7,11 +7,12 @@ var reporter = {}
 
 reporter.getAst = function(code) {
   var ast = this._compile(code);
-  return JSON.stringify(ast, astReplacer, 2);
+  var nodes = ast.declarations.concat(ast.program || []);
+  return JSON.stringify(nodes, astReplacer, 2);
 };
 
 reporter.run = function(code, initialBoard, format) {
-  var ast = this._compile(code);
+  var ast = this._compile(code).program;
   var context = this._createContext(initialBoard);
 
   try {
@@ -39,7 +40,7 @@ reporter.getBoardFromGbb = function(gbb, format) {
 
 reporter._compile = function(code) {
   try {
-    return parser.parse(code).program;
+    return parser.parse(code);
   } catch (err) {
     throw {
       status: "compilation_error",
