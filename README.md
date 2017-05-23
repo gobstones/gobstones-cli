@@ -97,10 +97,10 @@ gs-weblang-cli /tmp/gobs.gbs
   "result": {
     "on": ...
     },
-    "message": "El procedimiento Ponerrrrr no se encuentra definido.",
+    "message": 'El procedimiento "Ponerrrrr" no se encuentra definido.',
     "reason": {
       "code": "undefined_procedure",
-      "detail": "Ponerrrrr"
+      "detail": { name: "Ponerrrrr" }
     }
   }
 }

@@ -28,7 +28,7 @@ reporter.run = function(code, initialBoard, format) {
   } catch (err) {
     throw {
       status: "runtime_error",
-      result: this._buildRuntimeError(err)
+      result: this._buildError(err)
     };
   }
 };
@@ -44,7 +44,7 @@ reporter._compile = function(code) {
   } catch (err) {
     throw {
       status: "compilation_error",
-      result: this._buildCompilationError(err)
+      result: this._buildError(err)
     };
   }
 };
@@ -87,16 +87,7 @@ reporter._readGbb = function(gbb) {
   return gsWeblangCore.gbb.reader.fromString(gbb);
 };
 
-reporter._buildCompilationError = function(error) {
-  if (!error.on || !error.error) throw error;
-
-  return {
-    on: error.on,
-    message: error.error
-  }
-};
-
-reporter._buildRuntimeError = function(error) {
+reporter._buildError = function(error) {
   if (!error.on || !error.message || !error.reason) throw error;
 
   error.on = error.on.token || error.on;
