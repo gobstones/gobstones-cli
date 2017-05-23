@@ -7,7 +7,7 @@ var reporter = {}
 
 reporter.getAst = function(code) {
   var ast = this._compile(code);
-  var nodes = ast.declarations.concat(ast.program || []);
+  var nodes = (ast.program ? [ast.program] : []).concat(ast.declarations);
   return JSON.stringify(nodes, astReplacer, 2);
 };
 
