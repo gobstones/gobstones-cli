@@ -23,6 +23,6 @@
     "should": "^11.1.2"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./test/run-spec.js"
+    "test": "./node_modules/mocha/bin/mocha ./test/*-spec.js"
   }
 }
