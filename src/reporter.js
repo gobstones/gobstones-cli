@@ -5,11 +5,30 @@ var astReplacer = require("./ast-replacer");
 var _ = require("lodash");
 var reporter = {}
 
-reporter.getAst = function(code) {
-  var ast = this._compile(code);
-  var nodes = (ast.program ? [ast.program] : []).concat(ast.declarations);
-  return JSON.stringify(nodes, astReplacer, 2);
+function getAstAs(transform) {
+  return function(code) {
+    var ast = this._compile(code);
+    var nodes = (ast.program ? [ast.program] : []).concat(ast.declarations);
+    return JSON.stringify(transform(nodes), astReplacer, 2);
+  }
 };
+
+function mulangTransformer(program) {
+  return t(program[0]);
+}
+
+function t(s) {
+  if (s.alias == "program") {
+    return { tag: "EntryPoint", contents: ["program", t(s.body[0])]}
+  }
+  if (s.alias == "Drop") {
+    return { tag: "Application", contents: [{tag: "Reference", contents: "Poner"}].concat(s.parameters.map(function(x){return t(x)})) }
+  }
+  return {tag: "Other"}
+}
+
+reporter.getAst = getAstAs(function(x){return x});
+reporter.getMulangAst = getAstAs(mulangTransformer);
 
 reporter.run = function(code, initialBoard, format) {
   var ast = this._compile(code).program;
