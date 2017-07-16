@@ -1,8 +1,11 @@
 var should = require("should");
 var _ = require("lodash");
 
-var Mulang = require("../src/mulang");
-var s = Mulang.s;
+var parser = require("../src/parser");
+var mulang = require("../src/mulang");
+
+var s = mulang.s;
+var callable = mulang.callable;
 
 function program(body) {
   return s("EntryPoint", ["program", body]);
@@ -12,193 +15,192 @@ const muNull = s("MuNull");
 function reference(name) {
   return s("Reference", name);
 }
+function gbs(code) {
+  return mulang.parse(parser.parseAll(code));
+}
+
 
 describe("gobstones", function() {
-  it("translates programs with returns", function() {
-    Mulang.parse("program { result := foo(); return (result) }").should.equal(
+  it("translates programs with return", function() {
+    gbs("program { result := foo(); return (result) }").should.eql(
       program(s("Sequence", [
-        s("Variable",["result", s("Application", [reference("foo"), []])]),
+        s("Assignment",["result", s("Application", [reference("foo"), []])]),
         s("Return", reference("result"))]))
     );
   });
 
   it("translates simple Gobstones program", function() {
-    Mulang.parse("program {}").should.equal(program(muNull));
+    gbs("program {}").should.eql(program(muNull));
   });
 
   it("translates simple procedure Call", function() {
-    Mulang.parse("program{F()}").should.equal(program(s("Application", [reference("F"), []])));
+    gbs("program{F()}").should.eql(program(s("Application", [reference("F"), []])));
   });
 
   it("translates simple procedure declaration ", function() {
-    Mulang.parse("procedure F(){}").should.equal(callable("F", [], muNull));
+    gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], muNull));
   });
 
   it("translates simple procedure declaration and application  with a parameter", function() {
-    var code = Mulang.parse("program{F(2)} procedure F(parameter){}");
+    var code = gbs("procedure Foo(p){}\nprogram{Foo(2)}");
 
-    code.should.equal(
+    code.should.eql(
       s("Sequence", [
-        program(s("Application", [reference("F"), [s("MuNumber", 2.0)]])),
-        callable("F", s("VariablePattern", "parameter"), muNull)]));
+        program(s("Application", [reference("Foo"), [s("MuNumber", 2.0)]])),
+        callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull)]));
   });
 
   it("translates simple procedure Application ", function() {
-    var code = Mulang.parse("program{F()} procedure F(){}");
+    var code = gbs("program{Bar()} procedure Bar(){}");
 
-    code.should.equal(s("Sequence", [
-      program(s("Application", [reference("F"), []])),
-      callable( "F", [], muNull)]));
+    code.should.eql(s("Sequence", [
+      program(s("Application", [reference("Bar"), []])),
+      callable("Procedure", "Bar", [], muNull)]));
   });
 
   it("translates Poner", function() {
-    var code = Mulang.parse("program{Poner(Verde)}");
+    var code = gbs("program{Poner(Verde)}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("Application", [reference("Poner"), [s("MuSymbol", "Verde")]])));
   });
 
   it("translates Sacar", function() {
-    var code =  Mulang.parse("program{Sacar(Verde)}");
+    var code =  gbs("program{Sacar(Verde)}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("Application", [reference("Sacar"), [s("MuSymbol", "Verde")]])));
   });
 
   it("translates Mover", function() {
-    var code = Mulang.parse("program{Mover(Este)}");
+    var code = gbs("program{Mover(Este)}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("Application", [reference("Mover"), [s("MuSymbol", "Este")]])));
   });
 
-  it("translates simple function declaration", function() {
-    var code = Mulang.parse("function f(){return (Verde)}");
+  it("translates simple function declaration, with color return", function() {
+    var code = gbs("function f(){return (Verde)}");
 
-    code.should.equal(
-      callable("f", [], s("Sequence", [
-        muNull,
-        s("Return", s("MuSymbol", "Verde"))])));
+    code.should.eql(callable("Function", "f", [], s("Return", s("MuSymbol", "Verde"))));
   });
 
-  it("translates simple function declaration", function() {
-    var  code = Mulang.parse("function f(parameter){return (2)}");
+  it("translates simple function declaration, with numeric return", function() {
+    var  code = gbs("function f(parameter){return (2)}");
 
-    code.should.equal(
-      callable("f", [s("VariablePattern", "parameter")], s("Sequence", [
-        muNull,
-        s("Return", s("MuNumber", 2))])));
+    code.should.eql(
+      callable("Function", "f", [s("VariablePattern", "parameter")], s("Return", s("MuNumber", 2))));
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x:= 1}");
+  it("translates simple variable assignment of numbers", function() {
+    var code = gbs("program{x:= 1}");
 
-    code.should.equal(
-      program(s("Assignment", ["x", s("MuNumber", 1)])));
+    code.should.eql(program(s("Assignment", ["x", s("MuNumber", 1)])));
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x:= Verde}");
+  it("translates simple variable assignment of colors", function() {
+    var code = gbs("program{x:= Verde}");
 
-    code.should.equal(program(s("Variable", "x", s("MuSymbol", "Verde"))));
+    code.should.eql(program(s("Assignment", ["x", s("MuSymbol", "Verde")])));
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x:= True}");
+  it("translates simple variable assignment of booleans", function() {
+    var code = gbs("program{x:= True}");
 
-    code.should.equal(program(s("Variable", "x", s("MuBool", true))));
+    code.should.eql(program(s("Assignment", ["x", s("MuBool", true)])));
   });
 
-  it("translates simple variable assignment", function() {
-    var  code = Mulang.parse("program{x:= Este}");
+  it("translates simple variable assignment of directions", function() {
+    var  code = gbs("program{x:= Este}");
 
-    code.should.equal(program(s("Variable", "x", s("MuSymbol", "Este"))));
+    code.should.eql(program(s("Assignment", ["x", s("MuSymbol", "Este")])));
   });
 
-  it("translates simple variable assignment", function() {
-    var  code = Mulang.parse("program{x:= y}");
+  it("translates simple variable assignment of references", function() {
+    var  code = gbs("program{x:= y}");
 
-    code.should.equal(program(s("Variable", "x", reference("y"))));
+    code.should.eql(program(s("Assignment", ["x", reference("y")])));
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x:= f(2)}");
+  it("translates simple variable assignment of application", function() {
+    var code = gbs("program{x:= f(2)}");
 
-    code.should.equal(
-      program(s("Variable", "x", s("Application", [reference("f"), [s("MuNumber", 2.0)]])))
+    code.should.eql(
+      program(s("Assignment", ["x", s("Application", [reference("f"), [s("MuNumber", 2.0)]])]))
     );
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x:= z && y}");
+  it("translates simple variable assignment if binary", function() {
+    var code = gbs("program{x:= z && y}");
 
-    code.should.equal(
-      program(s("Variable", "x", s("Application", [reference("&&"), [reference("z"), reference("y")]])))
+    code.should.eql(
+      program(s("Assignment", ["x", s("Application", [reference("&&"), [reference("z"), reference("y")]])]))
     );
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x:= not z}");
+  it("translates simple variable assignment of not", function() {
+    var code = gbs("program{x:= not z}");
 
-    code.should.equal(
-      program(s("Variable", "x", s("Application", [reference("not"), [reference("z")]])))
+    code.should.eql(
+      program(s("Assignment", ["x", s("Application", [reference("not"), [reference("z")]])]))
     );
   });
 
-  it("translates simple variable assignment", function() {
-    var code = Mulang.parse("program{x := True == 2 && x /= t}");
+  it("translates simple variable assignment of nested binaries", function() {
+    var code = gbs("program{x := True == 2 && x /= t}");
 
-    code.should.equal(
+    code.should.eql(
       program(
-        s("Variable", "x",
+        s("Assignment", [
+          "x",
           s("Application", [
             reference("&&"), [
               s("Application", [s("Equal"),    [s("MuBool", true), s("MuNumber", 2.0)]]),
               s("Application", [s("NotEqual"), [reference("x"), reference("t")]])
-            ]])))
+            ]])]))
     );
   });
 
   it("translates simple procedure declaration and application  with a parameter", function() {
-    var code = Mulang.parse("program{F(Negro)} procedure F(parameter){}");
+    var code = gbs("program{F(Negro)}\nprocedure F(parameter){}");
 
-    code.should.equal(
+    code.should.eql(
       s("Sequence", [
-        program(
-          s("Application", [reference("F"), [s("MuSymbol", "Negro")]]),
-          callable("F", [s("VariablePattern", "parameter")], muNull))])
+        program(s("Application", [reference("F"), [s("MuSymbol", "Negro")]])),
+        callable("Procedure", "F", [s("VariablePattern", "parameter")], muNull)
+      ])
     );
   });
 
   it("translates conditional declaration", function() {
-    var code = Mulang.parse("program{if(True){}}");
+    var code = gbs("program{if(True){}}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("If", [s("MuBool", true), muNull, muNull]))
     );
   });
 
   it("translates conditional declaration, with branches", function() {
-    var code = Mulang.parse("program{if(True){x := 1}}");
+    var code = gbs("program{if(True){x := 1}}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("If", [
         s("MuBool", true),
-        s("Variable", ["x", s("MuNumber", 1.0)]),
+        s("Assignment", ["x", s("MuNumber", 1.0)]),
         muNull]))
     );
   });
 
   it("translates while declaration", function() {
-    var code = Mulang.parse("program{while(True){}}");
+    var code = gbs("program{while(True){}}");
 
-    code.should.equal(program(s("While", [s("MuBool", true), muNull])));
+    code.should.eql(program(s("While", [s("MuBool", true), muNull])));
   });
 
   it("translates while declaration", function() {
-    var code = Mulang.parse("program{while(True){x := 1}}");
+    var code = gbs("program{while(True){x := 1}}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("While", [
         s("MuBool", true),
         s("Assignment", ["x", s("MuNumber", 1.0)])]))
@@ -206,34 +208,34 @@ describe("gobstones", function() {
   });
 
   it("translates switch declaration", function() {
-    var code = Mulang.parse("program{switch(2) to {2 -> {x := 2}}}");
+    var code = gbs("program{switch(5) to {3 -> {x := 4}}}");
 
-    code.should.equal(
+    code.should.eql(
       program(
         s("Switch", [
-          s("MuNumber", 2.0),
-          [s("MuNumber", 2.0), s("Variable", ["x", s("MuNumber", 2.0)])]]))
+          s("MuNumber", 5.0),
+          [[s("MuNumber", 3.0), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
     );
   });
 
   it("translates repeat declaration", function() {
-    var code = Mulang.parse("program{repeat(2){x := 2}}");
+    var code = gbs("program{repeat(2){x := 2}}");
 
-    code.should.equal(
+    code.should.eql(
       program(s("Repeat", [
         s("MuNumber", 2.0),
-        s("Variable", ["x", s("MuNumber", 2.0)])]))
+        s("Assignment", ["x", s("MuNumber", 2.0)])]))
     );
   });
 
   it("translates a complete program", function() {
-    var code = Mulang.parse(`
+    var code = gbs(`
       program {F(Verde) G(2,3) X(Este) y := f(False) }
       procedure F(x){ Poner(x) Poner(x) Poner(x) Sacar(x) }
       procedure G(n1,n2){ x := n1 z := n2 while(True){ x := n1} switch(dir) to { Sur -> {Poner(Verde)} Este -> {Poner(Verde)} Oeste -> {Poner(Verde)} Norte -> {Poner(Verde)}}}
       procedure X(dir){ Mover(dir) }
-      function f(bool){ g := 2 if(False){ resultado := True} else { resultado := resultado} return (resultado)}"`);
+      function f(bool){ g := 2 if(False){ resultado := True} else { resultado := resultado} return (resultado)}`);
 
-    code.should.equal(null);
+    code.should.not.eql(s("Other"));
   });
 });

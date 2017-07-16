@@ -150,10 +150,7 @@ describe("run", function() {
               tag: "Reference",
               contents: "Poner"
             },
-            {
-              tag: "Reference",
-              contents: "Azul"
-            }
+            [{ tag: "MuSymbol", contents: "Azul" }]
           ]
         }],
     };
