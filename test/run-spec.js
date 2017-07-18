@@ -139,10 +139,31 @@ describe("run", function() {
         }
       ]
     }];
+    var mulangAst = {
+      tag: "EntryPoint",
+      contents: [
+        "program",
+        {
+          tag: "Application",
+          contents: [
+            {
+              tag: "Reference",
+              contents: "Poner"
+            },
+            [{ tag: "MuSymbol", contents: "Azul" }]
+          ]
+        }],
+    };
+
 
     it("can generate the AST of a program", function() {
       var output = exec(program, "--ast");
       output.should.eql(ast);
+    });
+
+    it("can generate the AST of a program, in mulang", function() {
+      var output = exec(program, "--mulang_ast");
+      output.should.eql(mulangAst);
     });
 
     it("can take the program from stdin", function() {

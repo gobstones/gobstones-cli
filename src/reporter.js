@@ -1,18 +1,22 @@
 var gsWeblangCore = require("gs-weblang-core/umd/index.umd");
+var mulang = require('./mulang');
 var Context = gsWeblangCore.Context;
-var parser = gsWeblangCore.getParser();
+var parser = require('./parser')
 var astReplacer = require("./ast-replacer");
 var _ = require("lodash");
 var reporter = {}
 
-reporter.getAst = function(code) {
-  var ast = this._compile(code);
-  var nodes = (ast.program ? [ast.program] : []).concat(ast.declarations);
-  return JSON.stringify(nodes, astReplacer, 2);
+function getJsonAstUsing(stringifier) {
+  return function(code) {
+    return stringifier(parser.parseAll(code));
+  }
 };
 
+reporter.getAst = getJsonAstUsing((nodes) => JSON.stringify(nodes, astReplacer, 2));
+reporter.getMulangAst = getJsonAstUsing((nodes) => JSON.stringify(mulang.parse(nodes)));
+
 reporter.run = function(code, initialBoard, format) {
-  var ast = this._compile(code).program;
+  var ast = parser.parseProgram(code);
   var context = this._createContext(initialBoard);
 
   try {
@@ -28,7 +32,7 @@ reporter.run = function(code, initialBoard, format) {
   } catch (err) {
     throw {
       status: "runtime_error",
-      result: this._buildError(err)
+      result: parser.buildError(err)
     };
   }
 };
@@ -36,17 +40,6 @@ reporter.run = function(code, initialBoard, format) {
 reporter.getBoardFromGbb = function(gbb, format) {
   var board = this._readGbb(gbb);
   return this._buildBoard(board, format);
-};
-
-reporter._compile = function(code) {
-  try {
-    return parser.parse(code);
-  } catch (err) {
-    throw {
-      status: "compilation_error",
-      result: this._buildError(err)
-    };
-  }
 };
 
 reporter._interpret = function(ast, context) {
@@ -85,13 +78,6 @@ reporter._getFormattedTable = function(board, format) {
 
 reporter._readGbb = function(gbb) {
   return gsWeblangCore.gbb.reader.fromString(gbb);
-};
-
-reporter._buildError = function(error) {
-  if (!error.on || !error.message || !error.reason) throw error;
-
-  error.on = error.on.token || error.on;
-  return _.pick(error, "on", "message", "reason");
 };
 
 module.exports = reporter

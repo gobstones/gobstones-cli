@@ -10,6 +10,12 @@ module.exports = {
     });
   },
 
+  "mulang_ast": function(config) {
+    withCode(function(code) {
+      console.log(reporter.getMulangAst(code));
+    });
+  },
+
   "batch": function(config) {
     var json = getFile(config.options.batch);
     var batch = getBatch(json);

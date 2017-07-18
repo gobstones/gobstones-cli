@@ -147,8 +147,16 @@ gs-weblang-cli --batch request.json
 
 ### Generate AST
 
+This tool can also generate the AST of a Gobstones program, in two different fashions:
+
+ * native AST - that is, the AST internally used by the tool to execute programs
+ * mulang AST - a simple AST suited to perform code analysys, that can be processed by the [Mulang tool](https://github.com/mumuki/mulang)
+
+#### Native AST
+
+
 ```bash
-echo "program {\n Poner(Azul)\n }" | gs-weblang-cli --ast --from_stdin
+echo "program { Poner(Azul) }" | gs-weblang-cli --ast --from_stdin
 ```
 
 ```json
@@ -167,4 +175,35 @@ echo "program {\n Poner(Azul)\n }" | gs-weblang-cli --ast --from_stdin
     }
   ]
 }
+```
+
+#### Mulang AST
+
+```bash
+echo "program { Poner(Azul) }" | gs-weblang-cli --mulang_ast --from_stdin | json_pp
+```
+
+```json
+{
+   "tag" : "EntryPoint",
+   "contents" : [
+      "program",
+      {
+         "tag" : "Application",
+         "contents" : [
+            {
+               "tag" : "Reference",
+               "contents" : "Poner"
+            },
+            [
+               {
+                  "tag" : "MuSymbol",
+                  "contents" : "Azul"
+               }
+            ]
+         ]
+      }
+   ]
+}
+
 ```
