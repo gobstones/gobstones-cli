@@ -1,4 +1,4 @@
-// Wrapper of gs-weblang-cli --ast --from_stdin
+// Wrapper of gobstones-cli --ast --from_stdin
 // It can be compiled with `nexe`: nexe -i rungs.js -o rungs-ubuntu64
 
 var gbs = require('gs-weblang-core/umd/index.umd.min');

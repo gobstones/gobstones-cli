@@ -1,14 +1,14 @@
 {
-  "name": "gs-weblang-cli",
-  "version": "2.0.2",
+  "name": "gobstones-cli",
+  "version": "1.0.1",
   "description": "CLI for Gobstones",
   "main": "src/cli.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gobstones/gs-weblang-cli.git"
+    "url": "git+https://github.com/gobstones/gobstones-cli.git"
   },
   "bin": {
-    "gs-weblang-cli": "bin/gs-weblang-cli"
+    "gobstones-cli": "bin/gobstones-cli"
   },
   "author": "Rodrigo Alfonso",
   "license": "ISC",

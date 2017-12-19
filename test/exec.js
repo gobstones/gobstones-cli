@@ -23,7 +23,7 @@ module.exports = function(program, arguments, fromStdin) {
 }
 
 var getCommand = function(program, arguments, fromStdin) {
-  var path = "/../bin/gs-weblang-cli";
+  var path = "/../bin/gobstones-cli";
 
   return fromStdin
     ? 'echo "' + program + '" | ' + __dirname + path + " " + arguments

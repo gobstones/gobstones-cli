@@ -1,13 +1,13 @@
-[![Build Status](https://travis-ci.org/gobstones/gs-weblang-cli.svg?branch=master)](https://travis-ci.org/gobstones/gs-weblang-cli)
+[![Build Status](https://travis-ci.org/gobstones/gobstones-cli.svg?branch=master)](https://travis-ci.org/gobstones/gobstones-cli)
 
-# gs-weblang-cli
+# gobstones-cli
 CLI for the Gobstones interpreter
 
 ## Install
 
 ```bash
 # requires node > 4
-sudo npm install -g gs-weblang-cli
+sudo npm install -g gobstones-cli
 ```
 
 ## Run tests
@@ -21,15 +21,15 @@ npm test
 The cli can be wrapped as an executable using [nexe](https://github.com/jaredallard/nexe): `npm install nexe -g`.
 
 ```
-git clone https://github.com/gobstones/gs-weblang-cli
-cd gs-weblang-cli
-nexe -i src/index.js -o gs-weblang-cli
+git clone https://github.com/gobstones/gobstones-cli
+cd gobstones-cli
+nexe -i src/index.js -o gobstones-cli
 ```
 
 ## Usage
 
 ```bash
-gs-weblang-cli --help
+gobstones-cli --help
 ```
 
 ### Run
@@ -38,7 +38,7 @@ gs-weblang-cli --help
 
 ```bash
 echo "program {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gs-weblang-cli /tmp/gobs.gbs -f gbb
+gobstones-cli /tmp/gobs.gbs -f gbb
 ```
 
 ```json
@@ -58,7 +58,7 @@ gs-weblang-cli /tmp/gobs.gbs -f gbb
 
 ```bash
 echo "programita {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gs-weblang-cli /tmp/gobs.gbs
+gobstones-cli /tmp/gobs.gbs
 ```
 
 ```json
@@ -88,7 +88,7 @@ gs-weblang-cli /tmp/gobs.gbs
 
 ```bash
 echo "program {\n Ponerrrrr(Rojo)\n }" > /tmp/gobs.gbs
-gs-weblang-cli /tmp/gobs.gbs
+gobstones-cli /tmp/gobs.gbs
 ```
 
 ```json
@@ -112,7 +112,7 @@ This one **shouldn't** happen very often, but for now... :sweat_smile:
 
 ```bash
 echo "" > /tmp/gobs.gbs
-gs-weblang-cli /tmp/gobs.gbs
+gobstones-cli /tmp/gobs.gbs
 ```
 
 ```json
@@ -141,7 +141,7 @@ gs-weblang-cli /tmp/gobs.gbs
 ```
 
 ```bash
-gs-weblang-cli --batch request.json
+gobstones-cli --batch request.json
 # returns an array with the responses
 ```
 
@@ -156,7 +156,7 @@ This tool can also generate the AST of a Gobstones program, in two different fas
 
 
 ```bash
-echo "program { Poner(Azul) }" | gs-weblang-cli --ast --from_stdin
+echo "program { Poner(Azul) }" | gobstones-cli --ast --from_stdin
 ```
 
 ```json
@@ -180,7 +180,7 @@ echo "program { Poner(Azul) }" | gs-weblang-cli --ast --from_stdin
 #### Mulang AST
 
 ```bash
-echo "program { Poner(Azul) }" | gs-weblang-cli --mulang_ast --from_stdin | json_pp
+echo "program { Poner(Azul) }" | gobstones-cli --mulang_ast --from_stdin | json_pp
 ```
 
 ```json

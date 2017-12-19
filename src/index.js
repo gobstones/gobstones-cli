@@ -15,11 +15,11 @@ var options = getopt.create([
 
 options.setHelp(
   "Examples of usage:\n" +
-  "gs-weblang-cli file.gbs\n" +
-  "gs-weblang-cli --initial_board board.gbb\n" +
-  "gs-weblang-cli --batch request.json\n" +
-  "gs-weblang-cli --ast --from_stdin\n" +
-  "gs-weblang-cli --mulang_ast --from_stdin\n" +
+  "gobstones-cli file.gbs\n" +
+  "gobstones-cli --initial_board board.gbb\n" +
+  "gobstones-cli --batch request.json\n" +
+  "gobstones-cli --ast --from_stdin\n" +
+  "gobstones-cli --mulang_ast --from_stdin\n" +
   "\n" + "[[OPTIONS]]"
 );
 
