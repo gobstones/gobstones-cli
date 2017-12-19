@@ -27,6 +27,7 @@ reporter.run = function(code, initialGbb, format) {
     finalBoard,
     format
   );
+  executionReport.snapshots = result.snapshots;
   executionReport.returnValue = result.returnValue;
 
   return {
