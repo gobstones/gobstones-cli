@@ -1,63 +1,43 @@
-var gsWeblangCore = require("gs-weblang-core/umd/index.umd");
 var mulang = require('./mulang');
-var Context = gsWeblangCore.Context;
-var parser = require('./parser')
+var interpreter = require('./interpreter');
 var astReplacer = require("./ast-replacer");
 var _ = require("lodash");
 var reporter = {}
 
+var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0\n";
+
 function getJsonAstUsing(stringifier) {
   return function(code) {
-    return stringifier(parser.parseAll(code));
+    return stringifier(interpreter.parseAll(code));
   }
 };
 
 reporter.getAst = getJsonAstUsing((nodes) => JSON.stringify(nodes, astReplacer, 2));
 reporter.getMulangAst = getJsonAstUsing((nodes) => JSON.stringify(mulang.parse(nodes)));
 
-reporter.run = function(code, initialBoard, format) {
-  var ast = parser.parseProgram(code);
-  var context = this._createContext(initialBoard);
+reporter.run = function(code, initialGbb, format) {
+  var program = interpreter.parseProgram(code);
+  if (!program) throw { status: "no_program_found" };
+  var gbb = initialGbb || DEFAULT_GBB;
+  var board = interpreter.readGbb(gbb);
+  var result = interpreter.interpret(program, board);
+  var finalBoard = result.finalBoard;
 
-  try {
-    var board = this._buildBoard(
-      this._interpret(ast, context),
-      format
-    );
+  var executionReport = this._buildBoard(
+    finalBoard,
+    format
+  );
+  executionReport.returnValue = result.returnValue;
 
-    return {
-      status: "passed",
-      result: board
-    }
-  } catch (err) {
-    throw {
-      status: "runtime_error",
-      result: parser.buildError(err)
-    };
+  return {
+    status: "passed",
+    result: executionReport
   }
 };
 
 reporter.getBoardFromGbb = function(gbb, format) {
-  var board = this._readGbb(gbb);
+  var board = interpreter.readGbb(gbb);
   return this._buildBoard(board, format);
-};
-
-reporter._interpret = function(ast, context) {
-  var newContext = ast.interpret(context);
-  var board = newContext.board();
-  board.exitStatus = newContext.exitStatus;
-  return board;
-};
-
-reporter._createContext = function(initialBoard) {
-  var context = new Context();
-
-  if (!_.isUndefined(initialBoard)) {
-    var board = this._readGbb(initialBoard);
-    _.assign(context.board(), board);
-  }
-
-  return context;
 };
 
 reporter._buildBoard = function(board, format) {
@@ -66,8 +46,8 @@ reporter._buildBoard = function(board, format) {
 };
 
 reporter._getFormattedTable = function(board, format) {
-  var gbb = function() { return gsWeblangCore.gbb.builder.build(board) };
-  var json = function() { return board.toView() };
+  var gbb = function() { return interpreter.buildGbb(board) };
+  var json = function() { return board.table };
 
   switch (format) {
     case "gbb": return gbb();
@@ -76,8 +56,4 @@ reporter._getFormattedTable = function(board, format) {
   }
 }
 
-reporter._readGbb = function(gbb) {
-  return gsWeblangCore.gbb.reader.fromString(gbb);
-};
-
-module.exports = reporter
+module.exports = reporter;

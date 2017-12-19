@@ -13,6 +13,7 @@
   "author": "Rodrigo Alfonso",
   "license": "ISC",
   "dependencies": {
+    "gobstones-interpreter": "^1.0.1",
     "gs-weblang-core": "2.0.1",
     "lodash": "^4.17.2",
     "node-getopt": "^0.2.3"
