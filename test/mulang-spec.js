@@ -116,7 +116,7 @@ describe("gobstones - mulang", function() {
   });
 
   it("translates simple variable assignment of references", function() {
-    var  code = gbs("program{x:= y}");
+    var code = gbs("program{x:= y}");
 
     code.should.eql(program(s("Assignment", ["x", reference("y")])));
   });

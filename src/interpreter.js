@@ -1,8 +1,8 @@
 var GobstonesInterpreterApi = require("gobstones-interpreter").GobstonesInterpreterAPI;
 var interpreter = function() { return new GobstonesInterpreterApi(); };
 
-function parse(code, operation = "parse") {
-  var result = interpreter()[operation](code);
+function parse(code, operation) {
+  var result = interpreter()[operation || "parse"](code);
 
   if (result.reason)
     throw {
