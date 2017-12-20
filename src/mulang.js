@@ -1,7 +1,3 @@
-// TODO:
-// - Interactive programs (N_DefInteractiveProgram)
-// - Foreach (N_StmtForeach) and ranges (N_ExprRange)
-
 //-----------------
 // S-expressions --
 //-----------------
@@ -104,6 +100,9 @@ function parseNode(node) {
     case "N_ExprVariable":
       return parseValue(contents[0]);
 
+    case "N_ExprConstantString":
+      return s("MuString", getString(contents[0]));
+
     case "N_ExprConstantNumber":
       return s("MuNumber", parseInt(getString(contents[0])));
 
@@ -113,6 +112,13 @@ function parseNode(node) {
 
     case "N_PatternWildcard":
       return reference("_");
+
+    case "N_DefInteractiveProgram":
+    case "N_StmtForeach":
+    case "N_PatternTimeout":
+    case "N_ExprRange":
+      // TODO: Implement
+      return s("Other");
 
     default:
       unmatched(node);

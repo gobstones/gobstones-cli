@@ -227,6 +227,16 @@ describe("gobstones - mulang", function() {
     );
   });
 
+  it("translates boom calls", function() {
+    var code = gbs('program { BOOM("asdasd") }');
+    code.should.eql(
+      program(s("Application", [
+        s("Reference", "BOOM"),
+        [s("MuString", "asdasd")]
+      ]))
+    );
+  });
+
   it("translates a complete program", function() {
     var code = gbs(`
       program {F(Verde) G(2,3) X(Este) y := f(False) }
@@ -236,5 +246,11 @@ describe("gobstones - mulang", function() {
       function f(bool){ g := 2 if(False){ resultado := True} else { resultado := resultado} return (resultado)}`);
 
     code.should.not.eql(s("Other"));
+  });
+
+  it("marks with 'Other' the unsupported code", function() {
+    var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } }");
+
+    code.should.eql(s("Other"));
   });
 });
