@@ -232,9 +232,7 @@ function parseNode(node) {
     case "N_PatternWildcard":
       return s("Reference", "_")
     default:
-      console.log("NO ENCONTRÉ", node);
-      return "nosenose"; // TODO: Borrar
-      //unmatched(node);
+      unmatched(node);
   }
   // if (key === "program")              return s("EntryPoint", ["program", parseProgramBody(o)]);
   // if (key === "procedureDeclaration") return simpleCallable("Procedure",

@@ -14,8 +14,6 @@ function program(body) {
 var muNull = s("MuNull");
 
 function gbs(code) {
-  // TODO: Eliminar
-  console.log("AST ORIGINAL", JSON.stringify(interpreter.getAst(code), null, 2));
   return mulang.parse(interpreter.getAst(code));
 }
 
@@ -229,7 +227,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it.only("translates a complete program", function() {
+  it("translates a complete program", function() {
     var code = gbs(`
       program {F(Verde) G(2,3) X(Este) y := f(False) }
       procedure F(x){ Poner(x) Poner(x) Poner(x) Sacar(x) }

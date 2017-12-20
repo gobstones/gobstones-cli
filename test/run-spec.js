@@ -145,23 +145,39 @@ describe("run", function() {
 
   });
 
-  describe.skip("AST generation", function() {
+  describe("AST generation", function() {
     var program = "program {\n Poner(Azul)\n }";
-    var ast = [{
-      "alias": "program",
-      "body": [
+    var ast = {
+      "tag": "N_Main",
+      "contents": [
         {
-          "arity": "statement",
-          "alias": "Drop",
-          "parameters": [
+          "tag": "N_DefProgram",
+          "contents": [
             {
-              "value": 0,
-              "alias": "Blue"
+              "tag": "N_StmtBlock",
+              "contents": [
+                {
+                  "tag": "N_StmtProcedureCall",
+                  "contents": [
+                    "UPPERID(\"Poner\")",
+                    [
+                      {
+                        "tag": "N_ExprStructure",
+                        "contents": [
+                          "UPPERID(\"Azul\")",
+                          []
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
             }
           ]
         }
       ]
-    }];
+    };
+
     var mulangAst = {
       tag: "EntryPoint",
       contents: [
@@ -177,7 +193,6 @@ describe("run", function() {
           ]
         }],
     };
-
 
     it("can generate the AST of a program", function() {
       var output = exec(program, "--ast");
