@@ -6,21 +6,20 @@ var mulang = require("../src/mulang");
 
 var s = mulang.s;
 var callable = mulang.callable;
+var reference = mulang.reference;
 
 function program(body) {
   return s("EntryPoint", ["program", body]);
 }
-
 var muNull = s("MuNull");
-function reference(name) {
-  return s("Reference", name);
-}
+
 function gbs(code) {
-  return mulang.parse(interpreter.parseAll(code));
+  // TODO: Eliminar
+  console.log("AST ORIGINAL", JSON.stringify(interpreter.getAst(code), null, 2));
+  return mulang.parse(interpreter.getAst(code));
 }
 
-
-describe.skip("gobstones - mulang", function() {
+describe("gobstones - mulang", function() {
   it("translates programs with return", function() {
     gbs("program { result := foo(); return (result) }").should.eql(
       program(s("Sequence", [
@@ -41,13 +40,17 @@ describe.skip("gobstones - mulang", function() {
     gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], muNull));
   });
 
-  it("translates simple procedure declaration and application  with a parameter", function() {
+  it.only("translates simple procedure declaration and application  with a parameter", function() {
     var code = gbs("procedure Foo(p){}\nprogram{Foo(2)}");
 
+    // TODO: Para preguntar a @fbulgarelli
+    // El "Application" estaba antes del "Procedure" por algo en particular? o da igual?
     code.should.eql(
       s("Sequence", [
-        program(s("Application", [reference("Foo"), [s("MuNumber", 2.0)]])),
-        callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull)]));
+        callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull),
+        program(s("Application", [reference("Foo"), [s("MuNumber", 2.0)]]))
+      ])
+    );
   });
 
   it("translates simple procedure Application ", function() {

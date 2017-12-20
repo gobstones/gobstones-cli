@@ -8,7 +8,7 @@ var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0\n";
 
 function getJsonAstUsing(stringifier) {
   return function(code) {
-    return stringifier(interpreter.parseAll(code));
+    return stringifier(interpreter.getAst(code));
   }
 };
 

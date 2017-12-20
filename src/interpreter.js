@@ -1,8 +1,8 @@
 var GobstonesInterpreterApi = require("gobstones-interpreter").GobstonesInterpreterAPI;
-var interpreter = () => new GobstonesInterpreterApi();
+var interpreter = function() { return new GobstonesInterpreterApi(); };
 
-function parse(code) {
-  var result = interpreter().parse(code);
+function parse(code, operation = "parse") {
+  var result = interpreter()[operation](code);
 
   if (result.reason)
     throw {
@@ -14,7 +14,7 @@ function parse(code) {
 };
 
 function interpret(program, board) {
-  const result = program.interpret(board);
+  var result = program.interpret(board);
 
   if (result.reason)
     throw {
@@ -25,13 +25,12 @@ function interpret(program, board) {
   return result;
 }
 
-function parseProgram(code) {
-  return parse(code).program;
+function getAst(code) {
+  return parse(code, "getAst");
 }
 
-function parseAll(code) {
-  var result = parse(code);
-  return (result.program ? [result.program] : []).concat(result.declarations);
+function parseProgram(code) {
+  return parse(code).program;
 }
 
 function readGbb(gbb) {
@@ -43,7 +42,7 @@ function buildGbb(board) {
 }
 
 module.exports = {
-  parseAll: parseAll,
+  getAst: getAst,
   parseProgram: parseProgram,
   interpret: interpret,
   readGbb,
