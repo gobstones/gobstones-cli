@@ -219,8 +219,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it.only("translates repeat declaration", function() {
-    console.log(JSON.stringify(gbs("program{repeat(2){x := 2}}"), null, 2));
+  it("translates repeat declaration", function() {
     var code = gbs("program{repeat(2){x := 2}}");
 
     code.should.eql(
@@ -230,7 +229,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it("translates a complete program", function() {
+  it.only("translates a complete program", function() {
     var code = gbs(`
       program {F(Verde) G(2,3) X(Este) y := f(False) }
       procedure F(x){ Poner(x) Poner(x) Poner(x) Sacar(x) }
