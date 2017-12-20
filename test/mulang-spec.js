@@ -208,7 +208,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it.only("translates switch declaration", function() {
+  it("translates switch declaration", function() {
     var code = gbs("program{switch(Verde) to {Rojo -> {x := 4}}}");
 
     code.should.eql(
@@ -219,7 +219,8 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it("translates repeat declaration", function() {
+  it.only("translates repeat declaration", function() {
+    console.log(JSON.stringify(gbs("program{repeat(2){x := 2}}"), null, 2));
     var code = gbs("program{repeat(2){x := 2}}");
 
     code.should.eql(

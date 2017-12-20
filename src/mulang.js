@@ -218,6 +218,8 @@ function parseNode(node) {
       return s("If", parse(contents));
     case "N_StmtWhile":
       return s("While", parse(contents));
+    case "N_StmtRepeat":
+      return s("Repeat", parse(contents));
     case "N_StmtSwitch":
       {
         var value = parse(contents[0]);
