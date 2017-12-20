@@ -219,7 +219,7 @@ function parseNode(node) {
     case "N_ExprConstantNumber":
       return s("MuNumber", parseInt(getIdentifierValue(contents[0])))
     case "N_ExprStructure":
-      return s("MuSymbol", getIdentifierValue(contents[0]))
+      return parseExpr(contents[0]);
     default:
       console.log("NO ENCONTRÉ", node);
       return "nosenose"; // TODO: Borrar
@@ -262,17 +262,17 @@ function parseDeclaration(kind, contents) {
   return simpleCallable(kind, name, parameters, body);
 }
 
-function parseValue(string, type = "Reference") {
-  // var type = string.split("(")[0];
-  // var value = getIdentifierValue(string);
+function parseValue(string) {
+  var value = getIdentifierValue(string);
 
-  // switch (type) {
-  //   case "LOWERID":
-  //   case "UPPERID":
-      return s(type, getIdentifierValue(string));
-    // case "NUM":
-    //   return s("MuNumber", parseInt(value));
-  // }
+  switch (value) {
+    case "==":
+      return s("Equal")
+    case "/=":
+      return s("NotEqual")
+    default:
+      return s("Reference", value);
+  }
 }
 
 function parseParameter(string) {
@@ -298,6 +298,15 @@ function parseParameter(string) {
 // function parseRepeat(kind, o) {
 //   return s(kind, [getExpression("expression", o), getBody("body", o)])
 // }
+
+function parseExpr(id) { // parseLiteral?
+  var value = getIdentifierValue(id);
+
+  if (value === "True" || value === "False")
+    return s("MuBool", value === "True");
+
+  return s("MuSymbol", value);
+}
 
 function getIdentifierValue(id) {
   return id.replace(/(^\w+\(")|("\)$)/g, "");

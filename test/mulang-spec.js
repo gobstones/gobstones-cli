@@ -80,16 +80,14 @@ describe("gobstones - mulang", function() {
       program(s("Application", [reference("Mover"), [s("MuSymbol", "Este")]])));
   });
 
-  it.only("translates simple function declaration, with color return", function() {
-    console.log(JSON.stringify(gbs("function f(){return (Verde)}"), null, 2));
-
+  it("translates simple function declaration, with color return", function() {
     var code = gbs("function f(){return (Verde)}");
 
     code.should.eql(callable("Function", "f", [], s("Return", s("MuSymbol", "Verde"))));
   });
 
   it("translates simple function declaration, with numeric return", function() {
-    var  code = gbs("function f(parameter){return (2)}");
+    var code = gbs("function f(parameter){return (2)}");
 
     code.should.eql(
       callable("Function", "f", [s("VariablePattern", "parameter")], s("Return", s("MuNumber", 2))));
@@ -149,7 +147,9 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it("translates simple variable assignment of nested binaries", function() {
+  it.only("translates simple variable assignment of nested binaries", function() {
+    console.log(JSON.stringify(gbs("program{x := True == 2 && x /= t}"), null, 2));
+
     var code = gbs("program{x := True == 2 && x /= t}");
 
     code.should.eql(
