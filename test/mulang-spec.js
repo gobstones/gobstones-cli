@@ -40,7 +40,7 @@ describe("gobstones - mulang", function() {
     gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], muNull));
   });
 
-  it("translates simple procedure declaration and application  with a parameter", function() {
+  it("translates simple procedure declaration and application with a parameter", function() {
     var code = gbs("procedure Foo(p){}\nprogram{Foo(2)}");
 
     code.should.eql(
@@ -147,9 +147,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it.only("translates simple variable assignment of nested binaries", function() {
-    console.log(JSON.stringify(gbs("program{x := True == 2 && x /= t}"), null, 2));
-
+  it("translates simple variable assignment of nested binaries", function() {
     var code = gbs("program{x := True == 2 && x /= t}");
 
     code.should.eql(
@@ -164,7 +162,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it("translates simple procedure declaration and application  with a parameter", function() {
+  it("translates simple procedure declaration and application with a parameter", function() {
     var code = gbs("program{F(Negro)}\nprocedure F(parameter){}");
 
     code.should.eql(
@@ -200,7 +198,7 @@ describe("gobstones - mulang", function() {
     code.should.eql(program(s("While", [s("MuBool", true), muNull])));
   });
 
-  it("translates while declaration", function() {
+  it.only("translates while declaration with body", function() {
     var code = gbs("program{while(True){x := 1}}");
 
     code.should.eql(

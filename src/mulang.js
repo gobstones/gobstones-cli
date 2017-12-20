@@ -85,13 +85,9 @@ function unmatched(v) {
 //-----------------
 
 function parse(body) {
-  // TODO: Terminar y borrar lo que no se use
-  // if (Array.isArray(body)) {
-  //   return s("Sequence", parseArray(parseKeyword1, body))
-  // }
-  // if (body === null) {
-  //   return s("MuNull");
-  // }
+  if ("" + body === "null") {
+    return s("MuNull");
+  }
 
   if (Array.isArray(body)) {
     return parseArray(parse, body)
@@ -218,6 +214,10 @@ function parseNode(node) {
       return parseValue(contents[0]);
     case "N_ExprConstantNumber":
       return s("MuNumber", parseInt(getIdentifierValue(contents[0])))
+    case "N_StmtIf":
+      return s("If", parse(contents));
+    case "N_StmtWhile":
+      return s("While", parse(contents));
     case "N_ExprStructure":
       return parseExpr(contents[0]);
     default:
