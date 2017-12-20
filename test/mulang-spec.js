@@ -40,11 +40,9 @@ describe("gobstones - mulang", function() {
     gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], muNull));
   });
 
-  it.only("translates simple procedure declaration and application  with a parameter", function() {
+  it("translates simple procedure declaration and application  with a parameter", function() {
     var code = gbs("procedure Foo(p){}\nprogram{Foo(2)}");
 
-    // TODO: Para preguntar a @fbulgarelli
-    // El "Application" estaba antes del "Procedure" por algo en particular? o da igual?
     code.should.eql(
       s("Sequence", [
         callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull),
@@ -82,7 +80,9 @@ describe("gobstones - mulang", function() {
       program(s("Application", [reference("Mover"), [s("MuSymbol", "Este")]])));
   });
 
-  it("translates simple function declaration, with color return", function() {
+  it.only("translates simple function declaration, with color return", function() {
+    console.log(JSON.stringify(gbs("function f(){return (Verde)}"), null, 2));
+
     var code = gbs("function f(){return (Verde)}");
 
     code.should.eql(callable("Function", "f", [], s("Return", s("MuSymbol", "Verde"))));

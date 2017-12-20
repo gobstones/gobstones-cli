@@ -199,13 +199,10 @@ function parseNode(node) {
       return s("Sequence", parse(contents));
     case "N_DefProgram":
       return s("EntryPoint", ["program"].concat(parse(contents)));
+    case "N_DefFunction":
+      return parseDeclaration("Function", contents);
     case "N_DefProcedure":
-      {
-        var name = getIdentifierValue(contents[0]);
-        var parameters = parseArray(parseParameter, contents[1]);
-        var body = parse(contents[2]);
-        return simpleCallable("Procedure", name, parameters, body);
-      }
+      return parseDeclaration("Procedure", contents);
     case "N_StmtAssignVariable":
       {
         var id = getIdentifierValue(contents[0]);
@@ -221,6 +218,8 @@ function parseNode(node) {
       return parseValue(contents[0]);
     case "N_ExprConstantNumber":
       return s("MuNumber", parseInt(getIdentifierValue(contents[0])))
+    case "N_ExprStructure":
+      return s("MuSymbol", getIdentifierValue(contents[0]))
     default:
       console.log("NO ENCONTRÉ", node);
       return "nosenose"; // TODO: Borrar
@@ -253,6 +252,14 @@ function parseNode(node) {
   // if (key === "hasStones")            return parsePrimitive("hayBolitas", o);
   // if (key === "canMove")              return parsePrimitive("puedeMover", o);
   // unmatched(o);
+}
+
+function parseDeclaration(kind, contents) {
+  var name = getIdentifierValue(contents[0]);
+  var parameters = parseArray(parseParameter, contents[1]);
+  var body = parse(contents[2]);
+
+  return simpleCallable(kind, name, parameters, body);
 }
 
 function parseValue(string, type = "Reference") {
