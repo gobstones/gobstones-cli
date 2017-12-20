@@ -1,26 +1,23 @@
 var should = require("should");
 var _ = require("lodash");
 
-var parser = require("../src/parser");
+var interpreter = require("../src/interpreter");
 var mulang = require("../src/mulang");
 
 var s = mulang.s;
 var callable = mulang.callable;
+var reference = mulang.reference;
 
 function program(body) {
   return s("EntryPoint", ["program", body]);
 }
+var muNull = s("MuNull");
 
-const muNull = s("MuNull");
-function reference(name) {
-  return s("Reference", name);
-}
 function gbs(code) {
-  return mulang.parse(parser.parseAll(code));
+  return mulang.parse(interpreter.getAst(code));
 }
 
-
-describe("gobstones", function() {
+describe("gobstones - mulang", function() {
   it("translates programs with return", function() {
     gbs("program { result := foo(); return (result) }").should.eql(
       program(s("Sequence", [
@@ -41,13 +38,15 @@ describe("gobstones", function() {
     gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], muNull));
   });
 
-  it("translates simple procedure declaration and application  with a parameter", function() {
+  it("translates simple procedure declaration and application with a parameter", function() {
     var code = gbs("procedure Foo(p){}\nprogram{Foo(2)}");
 
     code.should.eql(
       s("Sequence", [
-        program(s("Application", [reference("Foo"), [s("MuNumber", 2.0)]])),
-        callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull)]));
+        callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull),
+        program(s("Application", [reference("Foo"), [s("MuNumber", 2.0)]]))
+      ])
+    );
   });
 
   it("translates simple procedure Application ", function() {
@@ -86,7 +85,7 @@ describe("gobstones", function() {
   });
 
   it("translates simple function declaration, with numeric return", function() {
-    var  code = gbs("function f(parameter){return (2)}");
+    var code = gbs("function f(parameter){return (2)}");
 
     code.should.eql(
       callable("Function", "f", [s("VariablePattern", "parameter")], s("Return", s("MuNumber", 2))));
@@ -117,7 +116,7 @@ describe("gobstones", function() {
   });
 
   it("translates simple variable assignment of references", function() {
-    var  code = gbs("program{x:= y}");
+    var code = gbs("program{x:= y}");
 
     code.should.eql(program(s("Assignment", ["x", reference("y")])));
   });
@@ -161,7 +160,7 @@ describe("gobstones", function() {
     );
   });
 
-  it("translates simple procedure declaration and application  with a parameter", function() {
+  it("translates simple procedure declaration and application with a parameter", function() {
     var code = gbs("program{F(Negro)}\nprocedure F(parameter){}");
 
     code.should.eql(
@@ -197,7 +196,7 @@ describe("gobstones", function() {
     code.should.eql(program(s("While", [s("MuBool", true), muNull])));
   });
 
-  it("translates while declaration", function() {
+  it("translates while declaration with body", function() {
     var code = gbs("program{while(True){x := 1}}");
 
     code.should.eql(
@@ -208,13 +207,13 @@ describe("gobstones", function() {
   });
 
   it("translates switch declaration", function() {
-    var code = gbs("program{switch(5) to {3 -> {x := 4}}}");
+    var code = gbs("program{switch(Verde) to {Rojo -> {x := 4}}}");
 
     code.should.eql(
       program(
         s("Switch", [
-          s("MuNumber", 5.0),
-          [[s("MuNumber", 3.0), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
+          s("MuSymbol", "Verde"),
+          [[s("MuSymbol", "Rojo"), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
     );
   });
 
@@ -228,6 +227,16 @@ describe("gobstones", function() {
     );
   });
 
+  it("translates boom calls", function() {
+    var code = gbs('program { BOOM("asdasd") }');
+    code.should.eql(
+      program(s("Application", [
+        s("Reference", "BOOM"),
+        [s("MuString", "asdasd")]
+      ]))
+    );
+  });
+
   it("translates a complete program", function() {
     var code = gbs(`
       program {F(Verde) G(2,3) X(Este) y := f(False) }
@@ -237,5 +246,11 @@ describe("gobstones", function() {
       function f(bool){ g := 2 if(False){ resultado := True} else { resultado := resultado} return (resultado)}`);
 
     code.should.not.eql(s("Other"));
+  });
+
+  it("marks with 'Other' the unsupported code", function() {
+    var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } }");
+
+    code.should.eql(s("Other"));
   });
 });

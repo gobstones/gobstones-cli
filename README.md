@@ -34,95 +34,14 @@ gobstones-cli --help
 
 ### Run
 
-#### passed
+#### simple program
 
 ```bash
 echo "program {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
 gobstones-cli /tmp/gobs.gbs -f gbb
 ```
 
-```json
-{
-  "status": "passed",
-  "result": {
-    "x": 0,
-    "y": 0,
-    "sizeX": 9,
-    "sizeY": 9,
-    "table": "GBB/1.0\r\nsize 9 9\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n"
-  }
-}
-```
-
-#### compilation_error
-
-```bash
-echo "programita {\n Poner(Rojo)\n }" > /tmp/gobs.gbs
-gobstones-cli /tmp/gobs.gbs
-```
-
-```json
-{
-  "status": "compilation_error",
-  "result": {
-    "on": {
-      "range": {
-        "start": {
-          "row": 0,
-          "column": 1
-        },
-        "end": {
-          "row": 0,
-          "column": 10
-        }
-      },
-      "value": "programita",
-      "arity": "name"
-    },
-    "message": "Se esperaba una definición de programa, función o procedimiento."
-  }
-}
-```
-
-#### runtime_error
-
-```bash
-echo "program {\n Ponerrrrr(Rojo)\n }" > /tmp/gobs.gbs
-gobstones-cli /tmp/gobs.gbs
-```
-
-```json
-{
-  "status": "runtime_error",
-  "result": {
-    "on": ...
-    },
-    "message": 'El procedimiento "Ponerrrrr" no se encuentra definido.',
-    "reason": {
-      "code": "undefined_procedure",
-      "detail": { name: "Ponerrrrr" }
-    }
-  }
-}
-```
-
-#### all_is_broken_error
-
-This one **shouldn't** happen very often, but for now... :sweat_smile:
-
-```bash
-echo "" > /tmp/gobs.gbs
-gobstones-cli /tmp/gobs.gbs
-```
-
-```json
-{
-  "status": "all_is_broken_error",
-  "message": "Something has gone very wrong",
-  "detail": {},
-  "moreDetail": "Cannot read property 'range' of null"
-}
-```
+See [the tests](test/run-spec.js) for more examples!
 
 ### Batch run
 

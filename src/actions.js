@@ -59,7 +59,7 @@ module.exports = {
     console.log(
       JSON.parse(
         getFile(
-          __dirname + "/../node_modules/gs-weblang-core/package.json"
+          __dirname + "/../node_modules/gobstones-interpreter/package.json"
         )
       ).version
     );

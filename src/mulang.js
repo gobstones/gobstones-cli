@@ -1,53 +1,3 @@
-
-//-----------
-// Getters --
-//-----------
-
-function get(key, object) {
-  if (object === undefined) throw new Error("undefined object, when asking for key " + key)
-  if (key === undefined) throw new Error("undefined key")
-  return object[key]
-}
-
-function getJust(key, object) {
-  var value = get(key, object);
-  if (value === undefined) {
-    throw new Error("value not present");
-  }
-  return value;
-}
-
-function getWith(f, key, object) {
-  return f(getJust(key, object));
-}
-
-function getArrayWith(f, key, object) {
-  return getWith(it => parseArray(f, it), key, object);
-}
-
-function getString(key, object) {
-  return getStringWith((x) => x, key, object);
-}
-
-function getStringWith(f, key, object) {
-  function ensureString(s) {
-    if (typeof s !== 'string') {
-      throw new Error("value is not an string");
-    }
-    return f(s);
-  }
-  return getWith(ensureString, key, object);
-}
-
-function getExpression(key, object) {
-  return getWith(parseExpression, key, object);
-}
-
-function getBody(key, object) {
-  return getWith(parseBody, key, object);
-}
-
-
 //-----------------
 // S-expressions --
 //-----------------
@@ -56,12 +6,19 @@ function s(tag, contents) {
   if (tag === "Sequence" && contents.length === 1) {
     return contents[0];
   }
+
   if (tag === "Sequence" && contents.length === 0) {
     return { tag: "MuNull" };
   }
+
+  if (Array.isArray(contents) && contents.length === 1) {
+    return { tag: tag, contents: contents[0] };
+  }
+
   if (contents !== undefined) {
     return { tag: tag, contents: contents };
   }
+
   return { tag: tag };
 }
 
@@ -77,16 +34,23 @@ function unmatched(v) {
 // Actual Parser --
 //-----------------
 
-function parseBody(body) {
-  if (Array.isArray(body)) {
-    return s("Sequence", parseArray(parseKeyword1, body))
-  }
-  if (body === null) {
+function parse(body) {
+  if ("" + body === "null") {
     return s("MuNull");
   }
-  if (typeof body === 'object') {
-    return parseKeyword1(body);
+
+  if (Array.isArray(body)) {
+    return parseArray(parse, body)
   }
+
+  if (typeof body === "string") {
+    return parseValue(body);
+  }
+
+  if (typeof body === "object") {
+    return parseNode(body);
+  }
+
   unmatched(body);
 }
 
@@ -94,157 +58,140 @@ function parseArray(f, array) {
   return array.map(f);
 }
 
-function parseCaseValue(o) {
-  return [getExpression("case", o), getBody("body", o)];
-}
+function parseNode(node) {
+  var contents = node.contents;
 
-function parseParameter(o) {
-  return s("VariablePattern", getString("value", o));
-}
+  switch (node.tag) {
+    case "N_Main":
+    case "N_StmtBlock":
+      return s("Sequence", parse(contents));
 
-function parseFunctionCall(o) {
-  return parseKeyword("ProcedureCall", o);
-}
+    case "N_DefProgram":
+      return s("EntryPoint", ["program"].concat(parse(contents)));
 
-function parseLiteral(o) {
-  function f(kind, value) {
-    if (kind === "NumericLiteral")  return s("MuNumber", value);
-    if (typeof value === 'boolean') return s("MuBool", value);
-    if (typeof value === 'number')  return s("MuSymbol", parseColor(value));
-    if (typeof value === 'string')  return s("Reference", value);
-    if (Array.isArray(value))       return s("MuSymbol", parseDirection(value));
-    unmatched(o)
-  }
-  return f(get("alias",o), getJust("value", o));
-}
+    case "N_DefFunction":
+      return parseDeclaration("Function", contents);
 
-function parseDirection(direction) {
-  function f(x, y) {
-    if (x === 1 && y === 0)  return "Este";
-    if (x === 0 && y === 1)  return "Norte";
-    if (x === -1 && y === 0) return "Oeste";
-    if (x === 0 && y === -1) return "Sur";
-    unmatched(direction)
-  }
-  return f(direction[0], direction[1]);
-}
+    case "N_DefProcedure":
+      return parseDeclaration("Procedure", contents);
 
-function parseColor(color) {
-  return ["Azul", "Rojo", "Negro", "Verde"][color];
-}
+    case "N_StmtReturn":
+      return s("Return", parse(contents));
 
-function parseBinary(o) {
-  return simpleApplication(
-          getStringWith(parseFunction, "alias", o),
-          [getExpression("left", o), getExpression("right", o)]);
-}
+    case "N_StmtProcedureCall":
+    case "N_ExprFunctionCall":
+      return s("Application", parse(contents));
 
-function parseNot(o) {
-  return simpleApplication(
-          getStringWith(parseFunction, "alias", o),
-          [getExpression("expression", o)]);
-}
+    case "N_StmtAssignVariable":
+      return parseAssignment(contents);
 
-function parseFunction(name) {
-  if (name === "EqOperation")           return s("Equal");
-  if (name === "NotEqualOperation")     return s("NotEqual");
-  if (name === "AndOperation")          return s("Reference", "&&");
-  if (name === "OrOperation")           return s("Reference", "||");
-  if (name === "LessEqualOperation")    return s("Reference", "<=");
-  if (name === "LessOperation")         return s("Reference", "<");
-  if (name === "GraterOperation")       return s("Reference", ">");
-  if (name === "GreaterEqualOperation") return s("Reference", ">=");
-  return s("Reference", name);
-}
+    case "N_StmtIf":
+      return s("If", parse(contents));
 
-function parseExpression(o) {
-  if (get("name", o) !== undefined) return parseFunctionCall(o);
-  if (get("arity", o) === "binary") return parseBinary(o);
-  if (get("alias", o) === "not")    return parseNot(o);
-  return parseLiteral(o);
-}
+    case "N_StmtWhile":
+      return s("While", parse(contents));
 
-function parseReturn(o) {
-  return getExpression("expression", o);
-}
+    case "N_StmtRepeat":
+      return s("Repeat", parse(contents));
 
-function parseKeyword1(o) {
-  return parseKeyword(getJust("alias", o), o);
-}
+    case "N_StmtSwitch":
+      return parseSwitch(contents);
 
-function parseKeyword(key, o) {
-  if (key === "program")              return s("EntryPoint", ["program", parseProgramBody(o)]);
-  if (key === "procedureDeclaration") return simpleCallable("Procedure",
-                                              getString("name", o),
-                                              getArrayWith(parseParameter, "parameters", o),
-                                              getBody("body", o));
-  if (key === "functionDeclaration")  return simpleCallable("Function",
-                                              getString("name", o),
-                                              getArrayWith(parseParameter, "parameters", o),
-                                              addReturn(getBody("body", o), getWith(parseReturn, "return", o)));
-  if (key === "ProcedureCall")        return simpleApplication(
-                                          getStringWith(parseFunction,"name",o),
-                                          getArrayWith(parseExpression, "parameters", o));
-  if (key === ":=" )                  return s("Assignment", [getWith((x) => getString("value", x), "left", o), getExpression("right", o)]);
-  if (key === "if")                   return s("If",[
-                                              getExpression("condition", o),
-                                              getBody("trueBranch", o),
-                                              getBody("falseBranch", o)]);
-  if (key === "while")                return parseRepeat("While", o);
-  if (key === "repeat")               return parseRepeat("Repeat", o);
-  if (key === "switch")               return s("Switch", [getExpression("expression", o), getArrayWith(parseCaseValue, "cases", o)]);
-  if (key === "return")               return s("Return", getExpression("expression", o));
-  if (key === "Drop")                 return parsePrimitive("Poner", o);
-  if (key === "Grab")                 return parsePrimitive("Sacar", o);
-  if (key === "MoveClaw")             return parsePrimitive("Mover", o);
-  if (key === "hasStones")            return parsePrimitive("hayBolitas", o);
-  if (key === "canMove")              return parsePrimitive("puedeMover", o);
-  unmatched(o);
-}
+    case "N_ExprVariable":
+      return parseValue(contents[0]);
 
+    case "N_ExprConstantString":
+      return s("MuString", getString(contents[0]));
 
-function parseProgramBody(o) {
-  return addReturn(
-    getBody("body", o),
-    (fmap(parseReturn, get("returnSentence", o)) || s("MuNull")));
-}
+    case "N_ExprConstantNumber":
+      return s("MuNumber", parseInt(getString(contents[0])));
 
-function fmap(f, v) {
-  if (v !== undefined) {
-    return f(v);
+    case "N_ExprStructure":
+    case "N_PatternStructure":
+      return parseLiteral(contents[0]);
+
+    case "N_PatternWildcard":
+      return reference("_");
+
+    case "N_DefInteractiveProgram":
+    case "N_StmtForeach":
+    case "N_PatternTimeout":
+    case "N_ExprRange":
+      // TODO: Implement
+      return s("Other");
+
+    default:
+      unmatched(node);
   }
 }
 
-function parsePrimitive(name, value) {
-  return simpleApplication(parseFunction(name), getArrayWith(parseExpression, "parameters", value));
+function parseAssignment(contents) {
+  var id = getString(contents[0]);
+  var value = contents[1];
+  return s("Assignment", [id, parse(value)]);
 }
 
-function parseRepeat(kind, o) {
-  return s(kind, [getExpression("expression", o), getBody("body", o)])
+function parseDeclaration(kind, contents) {
+  var name = getString(contents[0]);
+  var parameters = parseArray(parseParameter, contents[1]);
+  var body = parse(contents[2]);
+
+  return callable(kind, name, parameters, body);
 }
 
-//---------------------------
-//-- Expression Transforms --
-//---------------------------
+function parseParameter(string) {
+  return s("VariablePattern", getString(string));
+}
 
-function addReturn(body, returned) {
-  if (returned.tag === "MuNull") return body;
-  if (body.tag === "MuNull")     return s("Return", returned);
-  if (body.tag === "Sequence")   return s("Sequence", body.contents.concat([s("Return", returned)]))
-  return s("Sequence", [body, s("Return", returned)])
+function parseSwitch(contents) {
+  var value = parse(contents[0]);
+  var branches = parseArray(parseSwitchBranch, contents[1]);
+  return s("Switch", [value, branches]);
+}
+
+function parseSwitchBranch(node) {
+  if (node.tag !== "N_SwitchBranch") unmatched(node);
+  var contents = node.contents;
+
+  return parse(contents);
+}
+
+function parseValue(string) {
+  var value = getString(string);
+
+  switch (value) {
+    case "==":
+      return s("Equal")
+    case "/=":
+      return s("NotEqual")
+    default:
+      return reference(value);
+  }
+}
+
+function parseLiteral(id) {
+  var value = getString(id);
+
+  if (value === "True" || value === "False")
+    return s("MuBool", value === "True");
+
+  return s("MuSymbol", value);
+}
+
+function getString(id) {
+  return id.replace(/(^\w+\(")|("\)$)/g, "");
 }
 
 //------------------
 //-- Constructors --
 //------------------
 
-
-function simpleCallable(kind, name, parameters, body) {
+function callable(kind, name, parameters, body) {
   return s(kind, [name, [[parameters, s("UnguardedBody", body)]]]);
 }
 
-function simpleApplication(callable, args) {
-  return s("Application", [callable, args]);
+function reference(name) {
+  return s("Reference", name);
 }
 
 //-------------
@@ -252,7 +199,8 @@ function simpleApplication(callable, args) {
 //-------------
 
 module.exports = {
-  parse: parseBody,
+  parse: parse,
   s: s,
-  callable: simpleCallable
+  callable: callable,
+  reference: reference
 };

@@ -11,17 +11,27 @@ describe("run", function() {
       var output = exec("program {\nPoner(Rojo)\n}", "--format gbb");
       output.status.should.equal("passed");
       output.result.should.containDeepOrdered({
-        x: 0,
-        y: 0,
-        sizeX: 9,
-        sizeY: 9,
-        table: 'GBB/1.0\r\nsize 9 9\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n'
+        head: { x: 0, y: 0 },
+        width: 4,
+        height: 4,
+        table: 'GBB/1.0\nsize 4 4\ncell 0 0 Rojo 1\nhead 0 0\n'
       });
+    });
+
+    it("should include the snapshots", function() {
+      var output = exec("program { Mover(Norte) ; Mover(Este) ; Mover(Norte) }");
+      output.result.snapshots[0].board.head.should.eql({ x: 0, y: 0 });
+      output.result.snapshots[1].board.head.should.eql({ x: 0, y: 1 });
+      output.result.snapshots[2].board.head.should.eql({ x: 1, y: 1 });
+      output.result.snapshots[3].board.head.should.eql({ x: 1, y: 2 });
     });
 
     it("should inform the exit status of a program", function() {
       var output = exec("program {\nreturn(8)\n}");
-      output.result.exitStatus.should.equal(8);
+      output.result.returnValue.should.eql({
+        type: "Number",
+        value: 8
+      });
     });
 
     it("should return an array board if the format is not specified", function() {
@@ -32,13 +42,12 @@ describe("run", function() {
     it("should respect the initial board if it is specified", function() {
       var output = exec("program {\nMover(Norte)\n}", "--initial_board=" + __dirname + "/fixture/initialBoard.gbb");
       output.result.should.containDeepOrdered({
-        x: 0,
-        y: 1,
-        sizeX: 2,
-        sizeY: 2,
+        head: { x: 0, y: 1 },
+        width: 2,
+        height: 2,
         table:[
-          [ { blue: 1, red: 0, black: 0, green: 0 }, { blue: 0, red: 0, black: 1, green: 0 } ],
-          [ { blue: 0, red: 1, black: 0, green: 0 }, { blue: 0, red: 0, black: 0, green: 1 } ]
+          [ { blue: 1  }, { black: 1 } ],
+          [ { red: 1 }, { green: 1 } ]
         ]
       });
     });
@@ -52,48 +61,62 @@ describe("run", function() {
       output.should.containDeepOrdered({
         "status": "compilation_error",
         "result": {
+          "message": "Se esperaba una definición (de programa, función, procedimiento, o tipo).\nSe encontró: un identificador con minúsculas.",
+          "reason": {
+            "code": "expected-but-found",
+            "detail": [
+              "una definición (de programa, función, procedimiento, o tipo)",
+              "un identificador con minúsculas"
+            ]
+          },
           "on": {
             "range": {
               "start": {
-                "row": 0,
+                "row": 1,
                 "column": 1
               },
               "end": {
-                "row": 0,
-                "column": 10
+                "row": 1,
+                "column": 11
               }
             },
-            "value": "programita",
-            "arity": "name"
-          },
-          "message": "Se esperaba una definición de programa, función o procedimiento."
+            "region": ""
+          }
         }
+      });
+    });
+
+    it("should return a no_program_found error if the program wasn't found", function() {
+      var output = exec("procedure Hola() { }");
+      output.should.containDeepOrdered({
+        "status": "no_program_found"
       });
     });
 
     describe("runtime errors", function() {
 
       var runtimeError = {
-        "status": "runtime_error",
+        "status": "compilation_error",
         "result": {
+          "message": "El procedimiento \"Ponerrrrr\" no está definido.",
+          "reason": {
+            "code": "undefined-procedure",
+            "detail": [
+              "Ponerrrrr"
+            ]
+          },
           "on": {
             "range": {
               "start": {
-                "row": 0,
+                "row": 1,
                 "column": 10
               },
               "end": {
-                "row": 0,
-                "column": 18
+                "row": 1,
+                "column": 24
               }
             },
-            "value": "Ponerrrrr",
-            "arity": "name"
-          },
-          "message": 'El procedimiento "Ponerrrrr" no se encuentra definido.',
-          "reason": {
-            "code": "undefined_procedure",
-            "detail": { name: "Ponerrrrr" }
+            "region": ""
           }
         }
       };
@@ -111,12 +134,12 @@ describe("run", function() {
     });
 
     it("should catch unexpected errors", function() {
-      var output = exec("");
+      var output = exec("program { }", "--initial_board=" + __dirname + "/fixture/wrongBoard.gbb");
       output.should.containDeepOrdered({
         "status": "all_is_broken_error",
         "message": "Something has gone very wrong",
         "detail": {},
-        "moreDetail": "Cannot read property 'range' of null"
+        "moreDetail": "GBB/1.0: Malformed board: unknown command \"Negra\"."
       });
     });
 
@@ -124,21 +147,37 @@ describe("run", function() {
 
   describe("AST generation", function() {
     var program = "program {\n Poner(Azul)\n }";
-    var ast = [{
-      "alias": "program",
-      "body": [
+    var ast = {
+      "tag": "N_Main",
+      "contents": [
         {
-          "arity": "statement",
-          "alias": "Drop",
-          "parameters": [
+          "tag": "N_DefProgram",
+          "contents": [
             {
-              "value": 0,
-              "alias": "Blue"
+              "tag": "N_StmtBlock",
+              "contents": [
+                {
+                  "tag": "N_StmtProcedureCall",
+                  "contents": [
+                    "UPPERID(\"Poner\")",
+                    [
+                      {
+                        "tag": "N_ExprStructure",
+                        "contents": [
+                          "UPPERID(\"Azul\")",
+                          []
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
             }
           ]
         }
       ]
-    }];
+    };
+
     var mulangAst = {
       tag: "EntryPoint",
       contents: [
@@ -154,7 +193,6 @@ describe("run", function() {
           ]
         }],
     };
-
 
     it("can generate the AST of a program", function() {
       var output = exec(program, "--ast");
@@ -181,101 +219,121 @@ describe("run", function() {
           "status": "passed",
           "result": {
             "initialBoard": {
-              "x": 0,
-              "y": 0,
-              "sizeX": 2,
-              "sizeY": 2,
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 2,
+              "height": 2,
               "table": {
-                "gbb": "GBB/1.0\r\nsize 2 2\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n",
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 0 Rojo 1\nhead 0 0\n",
                 "json": [
                   [
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    },
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    }
+                    {},
+                    {}
                   ],
                   [
                     {
-                      "blue": 0,
-                      "red": 1,
-                      "black": 0,
-                      "green": 0
+                      "red": 1
                     },
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    }
-                  ]
-                ]
-              }
-            },
-            "finalBoard": {
-              "x": 0,
-              "y": 1,
-              "sizeX": 2,
-              "sizeY": 2,
-              "table": {
-                "gbb": "GBB/1.0\r\nsize 2 2\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 1\r\n",
-                "json": [
-                  [
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    },
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    }
-                  ],
-                  [
-                    {
-                      "blue": 0,
-                      "red": 1,
-                      "black": 0,
-                      "green": 0
-                    },
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    }
+                    {}
                   ]
                 ]
               }
             },
             "extraBoard": {
-              "x": 0,
-              "y": 0,
-              "sizeX": 1,
-              "sizeY": 1,
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 1,
+              "height": 1,
               "table": {
-                "gbb": "GBB/1.0\r\nsize 1 1\r\nhead 0 0\r\n",
+                "gbb": "GBB/1.0\nsize 1 1\nhead 0 0\n",
                 "json": [
                   [
-                    {
-                      "blue": 0,
-                      "red": 0,
-                      "black": 0,
-                      "green": 0
-                    }
+                    {}
                   ]
                 ]
               }
+            },
+            "finalBoard": {
+              "head": {
+                "x": 0,
+                "y": 1
+              },
+              "width": 2,
+              "height": 2,
+              "table": {
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 0 Rojo 1\nhead 0 1\n",
+                "json": [
+                  [
+                    {},
+                    {}
+                  ],
+                  [
+                    {
+                      "red": 1
+                    },
+                    {}
+                  ]
+                ]
+              },
+              "snapshots": [
+                {
+                  "contextNames": [
+                    "program"
+                  ],
+                  "board": {
+                    "head": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "width": 2,
+                    "height": 2,
+                    "table": [
+                      [
+                        {},
+                        {}
+                      ],
+                      [
+                        {
+                          "red": 1
+                        },
+                        {}
+                      ]
+                    ]
+                  },
+                  "region": ""
+                },
+                {
+                  "contextNames": [
+                    "program"
+                  ],
+                  "board": {
+                    "head": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "width": 2,
+                    "height": 2,
+                    "table": [
+                      [
+                        {},
+                        {}
+                      ],
+                      [
+                        {
+                          "red": 1
+                        },
+                        {}
+                      ]
+                    ]
+                  },
+                  "region": ""
+                }
+              ],
+              "returnValue": null
             }
           }
         },
@@ -283,44 +341,67 @@ describe("run", function() {
           "status": "runtime_error",
           "result": {
             "initialBoard": {
-              "x": 0,
-              "y": 0,
-              "sizeX": 1,
-              "sizeY": 1,
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 1,
+              "height": 1,
               "table": {
-                "gbb": "GBB/1.0\r\nsize 1 1\r\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\r\nhead 0 0\r\n",
+                "gbb": "GBB/1.0\nsize 1 1\ncell 0 0 Rojo 1\nhead 0 0\n",
                 "json": [
                   [
                     {
-                      "blue": 0,
-                      "red": 1,
-                      "black": 0,
-                      "green": 0
+                      "red": 1
                     }
                   ]
                 ]
               }
             },
             "finalBoardError": {
+              "message": "No se puede mover hacia la dirección Norte: cae afuera del tablero.",
+              "reason": {
+                "code": "cannot-move-to",
+                "detail": [
+                  "Norte"
+                ]
+              },
               "on": {
-                "arity": "operator",
                 "range": {
-                  "end": {
-                    "column": 7,
-                    "row": 1
-                  },
                   "start": {
-                    "column": 7,
-                    "row": 1
+                    "row": 2,
+                    "column": 2
+                  },
+                  "end": {
+                    "row": 2,
+                    "column": 13
                   }
                 },
-                "value": "("
+                "region": ""
               },
-              "message": "Te caíste del tablero por: x=0 y=0",
-              "reason": {
-                "code": "out_of_board",
-                "detail": { "x": 0, "y": 0 }
-              }
+              "snapshots": [
+                {
+                  "contextNames": [
+                    "program"
+                  ],
+                  "board": {
+                    "head": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "width": 1,
+                    "height": 1,
+                    "table": [
+                      [
+                        {
+                          "red": 1
+                        }
+                      ]
+                    ]
+                  },
+                  "region": ""
+                }
+              ]
             }
           }
         }
