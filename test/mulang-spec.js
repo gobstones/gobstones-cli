@@ -198,7 +198,7 @@ describe("gobstones - mulang", function() {
     code.should.eql(program(s("While", [s("MuBool", true), muNull])));
   });
 
-  it.only("translates while declaration with body", function() {
+  it("translates while declaration with body", function() {
     var code = gbs("program{while(True){x := 1}}");
 
     code.should.eql(
@@ -208,14 +208,14 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it("translates switch declaration", function() {
-    var code = gbs("program{switch(5) to {3 -> {x := 4}}}");
+  it.only("translates switch declaration", function() {
+    var code = gbs("program{switch(Verde) to {Rojo -> {x := 4}}}");
 
     code.should.eql(
       program(
         s("Switch", [
-          s("MuNumber", 5.0),
-          [[s("MuNumber", 3.0), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
+          s("MuSymbol", "Verde"),
+          [[s("MuSymbol", "Rojo"), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
     );
   });
 

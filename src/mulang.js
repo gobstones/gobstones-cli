@@ -218,8 +218,17 @@ function parseNode(node) {
       return s("If", parse(contents));
     case "N_StmtWhile":
       return s("While", parse(contents));
+    case "N_StmtSwitch":
+      {
+        var value = parse(contents[0]);
+        var branches = parseArray(parseSwitchBranch, contents[1]);
+        return s("Switch", [value, branches]);
+      }
     case "N_ExprStructure":
+    case "N_PatternStructure":
       return parseExpr(contents[0]);
+    case "N_PatternWildcard":
+      return s("Reference", "_")
     default:
       console.log("NO ENCONTRÉ", node);
       return "nosenose"; // TODO: Borrar
@@ -277,6 +286,13 @@ function parseValue(string) {
 
 function parseParameter(string) {
   return s("VariablePattern", getIdentifierValue(string));
+}
+
+function parseSwitchBranch(node) {
+  if (node.tag !== "N_SwitchBranch") unmatched(node);
+  var contents = node.contents;
+
+  return parse(contents);
 }
 
 // function parseProgramBody(o) {
