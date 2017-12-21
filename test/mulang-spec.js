@@ -206,7 +206,7 @@ describe("gobstones - mulang", function() {
     );
   });
 
-  it("translates switch declaration", function() {
+  it("translates switch declaration with colors", function() {
     var code = gbs("program{switch(Verde) to {Rojo -> {x := 4}}}");
 
     code.should.eql(
@@ -214,6 +214,17 @@ describe("gobstones - mulang", function() {
         s("Switch", [
           s("MuSymbol", "Verde"),
           [[s("MuSymbol", "Rojo"), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
+    );
+  });
+
+  it("translates switch declaration with numbers", function() {
+    var code = gbs("program{switch(5) to {3 -> {x := 4}}}");
+
+    code.should.eql(
+      program(
+        s("Switch", [
+          s("MuNumber", 5.0),
+          [[s("MuNumber", 3.0), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
     );
   });
 

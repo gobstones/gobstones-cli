@@ -1,6 +1,6 @@
 {
   "name": "gobstones-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CLI for Gobstones",
   "main": "src/cli.js",
   "repository": {
@@ -13,7 +13,7 @@
   "author": "Rodrigo Alfonso",
   "license": "ISC",
   "dependencies": {
-    "gobstones-interpreter": "^1.0.2",
+    "gobstones-interpreter": "^1.0.3",
     "lodash": "^4.17.2",
     "node-getopt": "^0.2.3"
   },

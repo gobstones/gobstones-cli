@@ -103,6 +103,7 @@ function parseNode(node) {
     case "N_ExprConstantString":
       return s("MuString", getString(contents[0]));
 
+    case "N_PatternNumber":
     case "N_ExprConstantNumber":
       return s("MuNumber", parseInt(getString(contents[0])));
 
