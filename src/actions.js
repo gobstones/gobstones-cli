@@ -34,7 +34,7 @@ module.exports = {
           }, abort) : undefined;
 
         var mulangAst = safeRun(function() {
-          return JSON.parse(reporter.getMulangAst(it.code));
+          return JSON.parse(reporter.getMulangAst(it.originalCode || it.code));
         });
 
         return safeRun(function() {

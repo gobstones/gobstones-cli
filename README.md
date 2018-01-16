@@ -50,11 +50,12 @@ See [the tests](test/run-spec.js) for more examples!
 [
   {
     "initialBoard": "GBB...",
-    "code": "program {\n ..."
+    "originalCode": "procedure A() { ...",
+    "code": "program { ..."
   },
   {
     "initialBoard": "GBB...",
-    "code": "program {\n ..."
+    "code": "program { ..."
   },
 ]
 ```

@@ -380,6 +380,35 @@ describe("run", function() {
                 ]
               }
             },
+            "mulangAst": {
+              "tag": "Procedure",
+              "contents": [
+                "A",
+                [
+                  [
+                    [],
+                    {
+                      "tag": "UnguardedBody",
+                      "contents": {
+                        "tag": "Application",
+                        "contents": [
+                          {
+                            "tag": "Reference",
+                            "contents": "Poner"
+                          },
+                          [
+                            {
+                              "tag": "MuSymbol",
+                              "contents": "Negro"
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  ]
+                ]
+              ]
+            },
             "finalBoardError": {
               "message": "No se puede mover hacia la dirección Norte: cae afuera del tablero.",
               "reason": {
