@@ -33,11 +33,15 @@ module.exports = {
             return reporter.getBoardFromGbb(it.extraBoard, format);
           }, abort) : undefined;
 
+        var mulangAst = safeRun(function() {
+          return JSON.parse(reporter.getMulangAst(it.code));
+        });
+
         return safeRun(function() {
           var report = reporter.run(it.code, it.initialBoard, format);
-          return makeBatchReport(report, initialBoard, extraBoard);
+          return makeBatchReport(report, initialBoard, extraBoard, mulangAst);
         }, function(error) {
-          return makeBatchReport(error, initialBoard, extraBoard, "finalBoardError");
+          return makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError");
         });
       })
     );
@@ -119,10 +123,11 @@ var getBatch = function(json) {
   return batch;
 };
 
-var makeBatchReport = function(report, initialBoard, extraBoard, finalBoardKey) {
+var makeBatchReport = function(report, initialBoard, extraBoard, mulangAst, finalBoardKey) {
   var result = {
     initialBoard: initialBoard,
-    extraBoard: extraBoard
+    extraBoard: extraBoard,
+    mulangAst: mulangAst
   };
   result[finalBoardKey || "finalBoard"] = report.result;
   report.result = result;

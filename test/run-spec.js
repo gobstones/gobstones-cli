@@ -214,6 +214,7 @@ describe("run", function() {
   describe("Batch execution", function() {
     it("returns a report with the result of each execution", function() {
       var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch.json");
+
       output.should.containDeepOrdered([
         {
           "status": "passed",
@@ -256,6 +257,27 @@ describe("run", function() {
                   ]
                 ]
               }
+            },
+            "mulangAst": {
+              "tag": "EntryPoint",
+              "contents": [
+                "program",
+                {
+                  "tag": "Application",
+                  "contents": [
+                    {
+                      "tag": "Reference",
+                      "contents": "Mover"
+                    },
+                    [
+                      {
+                        "tag": "MuSymbol",
+                        "contents": "Norte"
+                      }
+                    ]
+                  ]
+                }
+              ]
             },
             "finalBoard": {
               "head": {
