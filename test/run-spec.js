@@ -459,6 +459,12 @@ describe("run", function() {
       ]);
     });
 
+    it("uses a default GBB if the initial board is null", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-without-initial-board.json");
+
+      output[0].status.should.eql("passed");
+      output[0].result.initialBoard.table.gbb.should.eql("GBB/1.0\nsize 4 4\nhead 0 0\n");
+    });
   });
 
 });

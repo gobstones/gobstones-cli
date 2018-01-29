@@ -3,6 +3,8 @@ var safeRun = require("./safe-run");
 var fs = require("fs");
 var _ = require("lodash");
 
+const DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
+
 module.exports = {
   "ast": function(config) {
     withCode(function(code) {
@@ -25,7 +27,7 @@ module.exports = {
         var format = "all";
 
         var initialBoard = safeRun(function() {
-          return reporter.getBoardFromGbb(it.initialBoard, format);
+          return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
         }, abort);
 
         var extraBoard = !_.isUndefined(it.extraBoard)
@@ -112,7 +114,7 @@ var getBatch = function(json) {
   }
 
   var requestsAreValid = _.every(batch, function(it) {
-    return _.isString(it.initialBoard) && _.isString(it.code) && (_.isUndefined(it.extraBoard) || _.isString(it.extraBoard));
+    return (_.isNull(it.initialBoard) || _.isString(it.initialBoard)) && _.isString(it.code) && (_.isUndefined(it.extraBoard) || _.isString(it.extraBoard));
   });
 
   if (!requestsAreValid) {
