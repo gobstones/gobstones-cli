@@ -1,5 +1,12 @@
+var globalOptions = require("./config").getConfig().options;
 var GobstonesInterpreterApi = require("gobstones-interpreter").GobstonesInterpreterAPI;
-var interpreter = function() { return new GobstonesInterpreterApi(); };
+var interpreter = function() {
+  var gobstonesApi = new GobstonesInterpreterApi();
+  if (globalOptions.language) {
+    gobstonesApi.config.setLanguage(globalOptions.language);
+  }
+  return gobstonesApi;
+};
 
 function parse(code, operation) {
   var result = interpreter()[operation || "parse"](code);

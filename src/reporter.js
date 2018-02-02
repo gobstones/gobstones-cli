@@ -2,7 +2,7 @@ var mulang = require('./mulang');
 var interpreter = require('./interpreter');
 var astReplacer = require("./ast-replacer");
 var _ = require("lodash");
-var reporter = {}
+var reporter = {};
 
 var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0\n";
 
@@ -10,7 +10,7 @@ function getJsonAstUsing(stringifier) {
   return function(code) {
     return stringifier(interpreter.getAst(code));
   }
-};
+}
 
 reporter.getAst = getJsonAstUsing((nodes) => JSON.stringify(nodes, astReplacer, 2));
 reporter.getMulangAst = getJsonAstUsing((nodes) => JSON.stringify(mulang.parse(nodes)));
@@ -55,6 +55,6 @@ reporter._getFormattedTable = function(board, format) {
     case "all": return { gbb: gbb(), json: json() };
     default: return json();
   }
-}
+};
 
 module.exports = reporter;
