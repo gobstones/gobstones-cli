@@ -208,7 +208,6 @@ describe("run", function() {
       var output = exec(program, "--ast --from_stdin", true);
       output.should.eql(ast);
     });
-
   });
 
   describe("Batch execution", function() {
@@ -464,6 +463,17 @@ describe("run", function() {
 
       output[0].status.should.eql("passed");
       output[0].result.initialBoard.table.gbb.should.eql("GBB/1.0\nsize 4 4\nhead 0 0\n");
+    });
+
+
+    it("batch works as expected with a correct language", function() {
+      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch.json");
+      output[0].status.should.eql("passed");
+    });
+
+    it("batch fails with an incorrect language", function() {
+      var output = exec("", "--format gbb --language xd --batch " + __dirname + "/fixture/batch.json");
+      output[0].status.should.eql("all_is_broken_error");
     });
   });
 
