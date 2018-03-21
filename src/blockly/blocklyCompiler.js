@@ -40,12 +40,12 @@ var loadBlockly = function(callback) {
 };
 
 module.exports = {
-  compile: function(xmlText, action, withPragmaRegion = true) {
+  compile: function(xmlText, action, withPragmaRegion) {
     loadBlockly(function() {
       var xml = Blockly.Xml.textToDom(xmlText);
       var workspace = new Blockly.Workspace();
       Blockly.Xml.domToWorkspace(xml, workspace);
-      Blockly.GobstonesLanguage.shouldAddRegionPragma = withPragmaRegion;
+      Blockly.GobstonesLanguage.shouldAddRegionPragma = withPragmaRegion !== false;
       var code = Blockly.GobstonesLanguage.workspaceToCode(workspace);
 
       action(code);

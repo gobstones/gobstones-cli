@@ -1,12 +1,12 @@
 should = require("should");
 var blocklyCompiler = require("../src/blockly/blocklyCompiler");
 
-var gsTestCode = function(name, xml, expectedCode, withRegions = false) {
+var gsTestCode = function(name, xml, expectedCode, withRegions) {
   it(name, function(done) {
     blocklyCompiler.compile(xml, function(compiledCode) {
       compiledCode.should.equal(expectedCode);
       done();
-    }, withRegions);
+    }, withRegions === undefined ? false : withRegions);
   });
 };
 
