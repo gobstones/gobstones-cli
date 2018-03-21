@@ -19,6 +19,7 @@
     "jsdom-global": "^3.0.2",
     "lodash": "^4.17.2",
     "node-getopt": "^0.2.3",
+    "proceds-blockly": "git://github.com/Program-AR/proceds-blockly.git#0.1.10",
     "xmldom": "^0.1.19"
   },
   "devDependencies": {
