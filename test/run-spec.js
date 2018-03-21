@@ -465,6 +465,11 @@ describe("run", function() {
       output[0].result.initialBoard.table.gbb.should.eql("GBB/1.0\nsize 4 4\nhead 0 0\n");
     });
 
+    it("can accept Blockly's XML as code input", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/blocks-batch.json");
+
+      output[0].status.should.eql("passed");
+    });
 
     it("batch works as expected with a correct language", function() {
       var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch.json");
