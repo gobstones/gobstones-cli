@@ -2,14 +2,14 @@ var loadBlockly = function(callback) {
   if (global.Blockly) return callback();
 
   require("../../vendor/blockly_compressed");
-  require("blockly/msg/js/en");
+  require("../../vendor/en");
 
   var jsdom = require("node-jsdom");
   jsdom.env("", [], function(errors, window) {
     global.window = window;
     global.document = window.document;
 
-    require("blockly/blocks_compressed");
+    require("../../vendor/blocks_compressed");
     require("proceds-blockly/proceds-blockly-original");
     require("proceds-blockly/proceds-blockly");
     window.initProcedsBlockly("Statement");
