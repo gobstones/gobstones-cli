@@ -1,9 +1,11 @@
 var reporter = require("./reporter");
+var blocklyCompiler = require("./blockly/blocklyCompiler");
 var safeRun = require("./safe-run");
+var async = require("async");
 var fs = require("fs");
 var _ = require("lodash");
 
-const DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
+var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
 
 module.exports = {
   "ast": function(config) {
@@ -22,10 +24,10 @@ module.exports = {
     var json = getFile(config.options.batch);
     var batch = getBatch(json);
 
-    report(
-      batch.map(function(it) {
-        var format = "all";
+    async.map(batch, function(it, callback) {
+      var format = "all";
 
+      withCode(function(code) {
         var initialBoard = safeRun(function() {
           return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
         }, abort);
@@ -36,17 +38,19 @@ module.exports = {
           }, abort) : undefined;
 
         var mulangAst = safeRun(function() {
-          return JSON.parse(reporter.getMulangAst(it.originalCode || it.code));
+          return JSON.parse(reporter.getMulangAst(it.originalCode || code));
         });
 
-        return safeRun(function() {
-          var report = reporter.run(it.code, it.initialBoard, format);
-          return makeBatchReport(report, initialBoard, extraBoard, mulangAst);
+        safeRun(function() {
+          var report = reporter.run(code, it.initialBoard, format);
+          return callback(null, makeBatchReport(report, initialBoard, extraBoard, mulangAst));
         }, function(error) {
-          return makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError");
+          callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
         });
-      })
-    );
+      }, it.code);
+    }, function(err, results) {
+      report(err ? makeError(err) : results);
+    });
   },
 
   "run": function(config) {
@@ -76,13 +80,17 @@ module.exports = {
   }
 };
 
-var withCode = function(action) {
-  if (!config.options.from_stdin) {
-    action(getFile(config.argv[0]));
-    return;
-  }
+var withCode = function(action, code) {
+  var finalCode = code || (
+    config.options.from_stdin
+      ? fs.readFileSync("/dev/stdin").toString()
+      : getFile(config.argv[0]
+    )
+  );
 
-  action(fs.readFileSync("/dev/stdin").toString());
+  var isBlocklyCode = _.startsWith(finalCode, "<xml");
+  if (isBlocklyCode) blocklyCompiler.compile(finalCode, action);
+  else action(finalCode);
 };
 
 var getReport = function(code, initialBoard, format) {

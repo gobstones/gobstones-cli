@@ -465,6 +465,14 @@ describe("run", function() {
       output[0].result.initialBoard.table.gbb.should.eql("GBB/1.0\nsize 4 4\nhead 0 0\n");
     });
 
+    it("can accept Blockly's XML as code input and compile it with region ids", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/blocks-batch.json");
+
+      output[0].status.should.eql("passed");
+      output[0].result.finalBoard.snapshots[0].regionStack.should.eql(
+        ["!wG0GTdDFO,7h$j.|K+c"]
+      );
+    });
 
     it("batch works as expected with a correct language", function() {
       var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch.json");
