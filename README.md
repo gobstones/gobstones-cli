@@ -6,7 +6,7 @@ CLI for the Gobstones interpreter
 ## Install
 
 ```bash
-# requires node > 4
+# requires node > 6
 sudo npm install -g gobstones-cli
 ```
 
