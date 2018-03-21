@@ -1,6 +1,6 @@
 {
   "name": "gobstones-cli",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "CLI for Gobstones",
   "main": "src/cli.js",
   "repository": {
@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.0",
-    "blockly": "git://github.com/google/blockly#b98e83e5a02abc83ff9cedf3d2d72c45c19ccc54",
     "gobstones-interpreter": "^1.2.1",
     "gs-element-blockly": "git://github.com/Program-AR/gs-element-blockly.git#0.9.1",
     "lodash": "^4.17.2",
