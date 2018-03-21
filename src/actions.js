@@ -3,7 +3,7 @@ var safeRun = require("./safe-run");
 var fs = require("fs");
 var _ = require("lodash");
 
-const DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
+var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
 
 module.exports = {
   "ast": function(config) {

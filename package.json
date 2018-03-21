@@ -13,9 +13,13 @@
   "author": "Rodrigo Alfonso",
   "license": "ISC",
   "dependencies": {
+    "blockly": "git://github.com/google/blockly#b98e83e5a02abc83ff9cedf3d2d72c45c19ccc54",
     "gobstones-interpreter": "^1.2.1",
+    "gs-element-blockly": "git://github.com/Program-AR/gs-element-blockly.git#0.9.1",
+    "jsdom-global": "^3.0.2",
     "lodash": "^4.17.2",
-    "node-getopt": "^0.2.3"
+    "node-getopt": "^0.2.3",
+    "xmldom": "^0.1.19"
   },
   "devDependencies": {
     "chai": "^3.5.0",
