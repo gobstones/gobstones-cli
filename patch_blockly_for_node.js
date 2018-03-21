@@ -1,4 +1,7 @@
-var blocklyFile = "node_modules/blockly/blockly_compressed.js";
+var fs = require("fs");
+var _ = require("lodash");
+
+var blocklyFile = "blockly_compressed.js";
 var blocklyCode = fs.readFileSync(blocklyFile).toString();
 var initialPatch = "global.DOMParser = require('xmlshim').DOMParser; global.XMLSerializer = require('xmlshim').XMLSerializer;"; // adding XML polyfills
 var finalPatch = "global.goog = goog; global.Blockly = Blockly;"; // making "goog" and "Blockly" globals

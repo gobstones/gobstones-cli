@@ -1,6 +1,3 @@
-var fs = require("fs");
-var _ = require("lodash");
-
 var loadBlockly = function(callback) {
   if (global.Blockly) return callback();
 
