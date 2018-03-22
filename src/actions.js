@@ -28,25 +28,29 @@ module.exports = {
       var format = "all";
 
       withCode(function(code) {
-        var initialBoard = safeRun(function() {
-          return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
-        }, abort);
+        withCode(function(extraCode) {
+          var finalCode = code + "\n" + extraCode;
 
-        var extraBoard = !_.isUndefined(it.extraBoard)
-          ? safeRun(function() {
-            return reporter.getBoardFromGbb(it.extraBoard, format);
-          }, abort) : undefined;
+          var initialBoard = safeRun(function() {
+            return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
+          }, abort);
 
-        var mulangAst = safeRun(function() {
-          return JSON.parse(reporter.getMulangAst(it.originalCode || code));
-        });
+          var extraBoard = !_.isUndefined(it.extraBoard)
+            ? safeRun(function() {
+              return reporter.getBoardFromGbb(it.extraBoard, format);
+            }, abort) : undefined;
 
-        safeRun(function() {
-          var report = reporter.run(code, it.initialBoard, format);
-          return callback(null, makeBatchReport(report, initialBoard, extraBoard, mulangAst));
-        }, function(error) {
-          callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
-        });
+          var mulangAst = safeRun(function() {
+            return JSON.parse(reporter.getMulangAst(it.originalCode || code));
+          });
+
+          safeRun(function() {
+            var report = reporter.run(finalCode, it.initialBoard, format);
+            return callback(null, makeBatchReport(report, initialBoard, extraBoard, mulangAst));
+          }, function(error) {
+            callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
+          });
+        }, it.extraCode || "");
       }, it.code);
     }, function(err, results) {
       report(err ? makeError(err) : results);
