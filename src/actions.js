@@ -85,12 +85,12 @@ module.exports = {
 };
 
 var withCode = function(action, code) {
-  var finalCode = code || (
-    config.options.from_stdin
+  var finalCode = code;
+  if (code !== "" && !code) {
+    finalCode = config.options.from_stdin
       ? fs.readFileSync("/dev/stdin").toString()
-      : getFile(config.argv[0]
-    )
-  );
+      : getFile(config.argv[0])
+  }
 
   var isBlocklyCode = _.startsWith(finalCode, "<xml");
   if (isBlocklyCode) blocklyCompiler.compile(finalCode, action);
