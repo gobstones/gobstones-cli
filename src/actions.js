@@ -50,7 +50,7 @@ module.exports = {
           }, function(error) {
             callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
           });
-        }, it.extraCode || "");
+        }, _.trim(it.extraCode || ""));
       }, it.code);
     }, function(err, results) {
       report(err ? makeError(err) : results);
