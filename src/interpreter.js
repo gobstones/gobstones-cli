@@ -50,6 +50,7 @@ function buildGbb(board) {
 
 module.exports = {
   getAst: getAst,
+  parse: parse,
   parseProgram: parseProgram,
   interpret: interpret,
   readGbb,

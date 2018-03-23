@@ -1,4 +1,5 @@
 var reporter = require("./reporter");
+var interpreter = require('./interpreter');
 var blocklyCompiler = require("./blockly/blocklyCompiler");
 var safeRun = require("./safe-run");
 var async = require("async");
@@ -27,8 +28,25 @@ module.exports = {
     async.map(batch, function(it, callback) {
       var format = "all";
 
-      withCode(function(code) {
-        withCode(function(extraCode) {
+      withCode(function(extraCode) {
+        var ast = interpreter.parse(extraCode);
+
+        var computeDeclarations = function(type) {
+          var alias = type + "Declaration";
+
+          return ast.declarations.filter(function(it) {
+            return it.alias === alias;
+          }).map(function(it) {
+            return it.name;
+          });
+        }
+
+        var teacherActions = {
+          primitiveProcedures: computeDeclarations("procedure"),
+          primitiveFunctions: computeDeclarations("function"),
+        };
+
+        withCode(function(code) {
           var finalCode = code + "\n" + extraCode;
 
           var initialBoard = safeRun(function() {
@@ -50,8 +68,8 @@ module.exports = {
           }, function(error) {
             callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
           });
-        }, _.trim(it.extraCode || ""));
-      }, it.code);
+        }, it.code, teacherActions);
+      }, _.trim(it.extraCode || ""));
     }, function(err, results) {
       report(err ? makeError(err) : results);
     });
@@ -84,7 +102,7 @@ module.exports = {
   }
 };
 
-var withCode = function(action, code) {
+var withCode = function(action, code, teacherActions) {
   var finalCode = code;
   if (code !== "" && !code) {
     finalCode = config.options.from_stdin
@@ -93,7 +111,7 @@ var withCode = function(action, code) {
   }
 
   var isBlocklyCode = _.startsWith(finalCode, "<xml");
-  if (isBlocklyCode) blocklyCompiler.compile(finalCode, action);
+  if (isBlocklyCode) blocklyCompiler.compile(finalCode, action, true, teacherActions);
   else action(finalCode);
 };
 

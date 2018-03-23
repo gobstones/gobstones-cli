@@ -22,9 +22,21 @@ var loadBlockly = function(callback) {
 };
 
 module.exports = {
-  compile: function(xmlText, action, withRegions = true) {
+  compile: function(xmlText, action, withRegions = true, teacherActions = null) {
+    var self = this;
+
     loadBlockly(function() {
       var xml = Blockly.Xml.textToDom(xmlText);
+
+      if (teacherActions) {
+        teacherActions.primitiveProcedures.forEach(function(it) {
+          self._definePrimitiveProcedure(it);
+        });
+        teacherActions.primitiveFunctions.forEach(function(it) {
+          self._definePrimitiveFunction(it);
+        });
+      }
+
       var workspace = new Blockly.Workspace();
       Blockly.Xml.domToWorkspace(xml, workspace);
       Blockly.GobstonesLanguage.shouldAddRegionPragma = withRegions;
@@ -32,5 +44,55 @@ module.exports = {
 
       action(code);
     });
+  },
+
+  _definePrimitiveProcedure(name) {
+    this._definePrimitiveAction(name, false, window.procBlockCodeGenerator);
+  },
+
+  _definePrimitiveFunction(name) {
+    this._definePrimitiveAction(name, true, window.functionBlockCodeGenerator);
+  },
+
+  _definePrimitiveAction(name, withOutput, generator) {
+    var parts = this._getPartsByConvention(name);
+
+    Blockly.Blocks[name] = {
+      init: function () {
+        var argsIndex = 1;
+        this.setColour(Blockly.GOBSTONES_COLORS.primitiveCommand);
+
+        for (var i in parts) {
+          if (i == (parts.length - 1)) {
+            this.appendDummyInput().appendField(parts[i]);
+          } else {
+            this.appendValueInput("arg" + argsIndex).appendField(parts[i]);
+            argsIndex++;
+          }
+        }
+        this.setPreviousStatement(!withOutput);
+        this.setNextStatement(!withOutput);
+        this.setInputsInline(true);
+        if (withOutput) this.setOutput("var");
+      }
+    };
+
+    var argsList = [];
+    for (var i = 1; i < parts.length; i++) {
+      argsList.push("arg" + i);
+    }
+
+    Blockly.GobstonesLanguage[name] = generator(name, argsList);
+  },
+
+  _getPartsByConvention(name) {
+    var parts = name.replace(/([A-Z])/g, " $1").toLowerCase();
+    parts = parts[1].toUpperCase() + parts.substring(2);
+    parts = this._getParts(parts);
+    return parts;
+  },
+
+  _getParts(name) {
+    return name.split("_");
   }
 };

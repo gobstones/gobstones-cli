@@ -466,12 +466,19 @@ describe("run", function() {
     });
 
     it("can accept Blockly's XML as code input and compile it with region ids", function() {
-      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/blocks-batch.json");
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-blocks.json");
 
       output[0].status.should.eql("passed");
       output[0].result.finalBoard.snapshots[0].regionStack.should.eql(
         ["!wG0GTdDFO,7h$j.|K+c"]
       );
+    });
+
+    it("can accept Blockly's XML in both code and extraCode, and supports primitive procedures", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-all-xml.json");
+
+      output[0].status.should.eql("passed");
+      output[0].result.finalBoard.table.json[1][0].green.should.equal(2);
     });
 
     it("batch works as expected with a correct language", function() {
@@ -481,7 +488,7 @@ describe("run", function() {
 
     it("batch fails with an incorrect language", function() {
       var output = exec("", "--format gbb --language xd --batch " + __dirname + "/fixture/batch.json");
-      output[0].status.should.eql("all_is_broken_error");
+      output.status.should.eql("all_is_broken_error");
     });
   });
 

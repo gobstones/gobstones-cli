@@ -16,7 +16,7 @@ module.exports = function(program, arguments, fromStdin) {
   try {
     return JSON.parse(output);
   } catch (err) {
-    var error = new Error("The command did not respond a JSON");
+    var error = new Error("The command did not respond a JSON. Output:\n" + output);
     error.output = output;
     throw error;
   }

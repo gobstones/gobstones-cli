@@ -15,7 +15,7 @@
   "dependencies": {
     "async": "^2.6.0",
     "gobstones-interpreter": "^1.2.1",
-    "gs-element-blockly": "git://github.com/Program-AR/gs-element-blockly.git#0.10.0",
+    "gs-element-blockly": "git://github.com/Program-AR/gs-element-blockly.git#0.10.3",
     "lodash": "^4.17.2",
     "node-getopt": "^0.2.3",
     "node-jsdom": "^3.1.5",
