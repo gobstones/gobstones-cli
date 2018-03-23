@@ -1,6 +1,6 @@
 {
   "name": "gobstones-cli",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "CLI for Gobstones",
   "main": "src/cli.js",
   "repository": {
