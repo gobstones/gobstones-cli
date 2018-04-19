@@ -121,9 +121,9 @@ program {
     `program {
   if (puedeMover(Este)) {
     Poner(Rojo)
-  } else if (puedeMover(Oeste)) {
+  } elseif (puedeMover(Oeste)) {
     Sacar(Rojo)
-  } else if (puedeMover(Sur)) {
+  } elseif (puedeMover(Sur)) {
   } else {
     Mover(Este)
   }
@@ -584,11 +584,11 @@ program {
     /*@BEGIN_REGION@poner1@*/
     Poner(/*@BEGIN_REGION@rojo1@*/Rojo/*@END_REGION@*/)
     /*@END_REGION@*/
-  } else if (/*@BEGIN_REGION@puedeMover2@*/puedeMover(/*@BEGIN_REGION@oeste2@*/Oeste/*@END_REGION@*/)/*@END_REGION@*/) {
+  } elseif (/*@BEGIN_REGION@puedeMover2@*/puedeMover(/*@BEGIN_REGION@oeste2@*/Oeste/*@END_REGION@*/)/*@END_REGION@*/) {
     /*@BEGIN_REGION@sacar@*/
     Sacar(/*@BEGIN_REGION@rojo2@*/Rojo/*@END_REGION@*/)
     /*@END_REGION@*/
-  } else if (/*@BEGIN_REGION@puedeMover3@*/puedeMover(/*@BEGIN_REGION@sur3@*/Sur/*@END_REGION@*/)/*@END_REGION@*/) {
+  } elseif (/*@BEGIN_REGION@puedeMover3@*/puedeMover(/*@BEGIN_REGION@sur3@*/Sur/*@END_REGION@*/)/*@END_REGION@*/) {
   } else {
     /*@BEGIN_REGION@mover3@*/
     Mover(/*@BEGIN_REGION@este3@*/Este/*@END_REGION@*/)

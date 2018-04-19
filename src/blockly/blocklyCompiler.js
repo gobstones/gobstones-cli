@@ -60,7 +60,7 @@ module.exports = {
     Blockly.Blocks[name] = {
       init: function () {
         var argsIndex = 1;
-        this.setColour(Blockly.GOBSTONES_COLORS.primitiveCommand);
+        this.setColour(Blockly.CUSTOM_COLORS.primitiveCommand);
 
         for (var i in parts) {
           if (i == (parts.length - 1)) {
