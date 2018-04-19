@@ -11,7 +11,8 @@ var options = getopt.create([
   ["f", "format=FORMAT", "Format of the final board table (gbb|json|all). Default: json."],
   ["v", "version", "Display the version."],
   ["h", "help", "Display this help."],
-  ["l", "language=LANGUAGE", "The language code. Default: es"]
+  ["l", "language=LANGUAGE", "The language code. Default: es"],
+  ["t", "timeout=MILLISECONDS", "The timeout used to detect infinite loops. Default: 3000."]
 ]);
 
 options.setHelp(

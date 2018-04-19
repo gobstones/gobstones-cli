@@ -122,15 +122,21 @@ describe("run", function() {
       };
 
       it("should return a runtime error if the program does boom", function() {
-        var output = exec("program {\Ponerrrrr(Rojo)\n}");
+        var output = exec("program {Ponerrrrr(Rojo)\n}");
         output.should.eql(runtimeError);
       });
 
       it("should report the errors well when reading from stdin", function() {
-        var output = exec("program {\Ponerrrrr(Rojo)\n}", "--from_stdin", true);
+        var output = exec("program {Ponerrrrr(Rojo)\n}", "--from_stdin", true);
         output.should.eql(runtimeError);
       });
 
+    });
+
+    it("should handle support custom timeout values", function() {
+      var output = exec("program { while (True) { } }", "--timeout 123");
+      output.result.reason.code.should.eql("timeout");
+      output.result.reason.detail[0].should.eql(123);
     });
 
     it("should catch unexpected errors", function() {
