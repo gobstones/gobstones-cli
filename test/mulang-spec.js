@@ -11,7 +11,7 @@ var reference = mulang.reference;
 function program(body) {
   return s("EntryPoint", ["program", body]);
 }
-var muNull = s("MuNull");
+var none = s("None");
 
 function gbs(code) {
   return mulang.parse(interpreter.getAst(code));
@@ -27,7 +27,7 @@ describe("gobstones - mulang", function() {
   });
 
   it("translates simple Gobstones program", function() {
-    gbs("program {}").should.eql(program(muNull));
+    gbs("program {}").should.eql(program(none));
   });
 
   it("translates simple procedure Call", function() {
@@ -35,7 +35,7 @@ describe("gobstones - mulang", function() {
   });
 
   it("translates simple procedure declaration ", function() {
-    gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], muNull));
+    gbs("procedure F(){}").should.eql(callable("Procedure", "F", [], none));
   });
 
   it("translates simple procedure declaration and application with a parameter", function() {
@@ -43,7 +43,7 @@ describe("gobstones - mulang", function() {
 
     code.should.eql(
       s("Sequence", [
-        callable("Procedure", "Foo", [s("VariablePattern", "p")], muNull),
+        callable("Procedure", "Foo", [s("VariablePattern", "p")], none),
         program(s("Application", [reference("Foo"), [s("MuNumber", 2.0)]]))
       ])
     );
@@ -54,7 +54,7 @@ describe("gobstones - mulang", function() {
 
     code.should.eql(s("Sequence", [
       program(s("Application", [reference("Bar"), []])),
-      callable("Procedure", "Bar", [], muNull)]));
+      callable("Procedure", "Bar", [], none)]));
   });
 
   it("translates Poner", function() {
@@ -166,7 +166,7 @@ describe("gobstones - mulang", function() {
     code.should.eql(
       s("Sequence", [
         program(s("Application", [reference("F"), [s("MuSymbol", "Negro")]])),
-        callable("Procedure", "F", [s("VariablePattern", "parameter")], muNull)
+        callable("Procedure", "F", [s("VariablePattern", "parameter")], none)
       ])
     );
   });
@@ -175,7 +175,7 @@ describe("gobstones - mulang", function() {
     var code = gbs("program{if(True){}}");
 
     code.should.eql(
-      program(s("If", [s("MuBool", true), muNull, muNull]))
+      program(s("If", [s("MuBool", true), none, none]))
     );
   });
 
@@ -186,14 +186,14 @@ describe("gobstones - mulang", function() {
       program(s("If", [
         s("MuBool", true),
         s("Assignment", ["x", s("MuNumber", 1.0)]),
-        muNull]))
+        none]))
     );
   });
 
   it("translates while declaration", function() {
     var code = gbs("program{while(True){}}");
 
-    code.should.eql(program(s("While", [s("MuBool", true), muNull])));
+    code.should.eql(program(s("While", [s("MuBool", true), none])));
   });
 
   it("translates while declaration with body", function() {
