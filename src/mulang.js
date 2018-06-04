@@ -8,7 +8,7 @@ function s(tag, contents) {
   }
 
   if (tag === "Sequence" && contents.length === 0) {
-    return { tag: "MuNull" };
+    return { tag: "None" };
   }
 
   if (Array.isArray(contents) && contents.length === 1) {
@@ -36,7 +36,7 @@ function unmatched(v) {
 
 function parse(body) {
   if ("" + body === "null") {
-    return s("MuNull");
+    return s("None");
   }
 
   if (Array.isArray(body)) {
