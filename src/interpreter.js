@@ -30,11 +30,17 @@ function parse(code, operation) {
 function interpret(program, board) {
   var result = program.interpret(board);
 
-  if (result.reason)
+  if (result.reason) {
+    if (result.reason.code === "timeout") {
+      result.on.regionStack = [];
+      result.snapshots = [];
+    }
+
     throw {
       status: "runtime_error",
       result: result
     };
+  }
 
   return result;
 }
