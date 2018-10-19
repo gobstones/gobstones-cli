@@ -7,6 +7,8 @@ var fs = require("fs");
 var _ = require("lodash");
 
 var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
+var RETROCOMPATIBILITY_ALLOW_RECURSION = "\n/*@LANGUAGE@AllowRecursion@*/";
+var RETROCOMPATIBILITY_ULTIMO = "\nfunction ultimo(list) { return (último(list)) }";
 
 module.exports = {
   "ast": function(config) {
@@ -47,7 +49,7 @@ module.exports = {
         };
 
         withCode(function(code) {
-          var finalCode = code + "\n" + extraCode;
+          var finalCode = buildBatchCode(code, extraCode, config);
 
           var initialBoard = safeRun(function() {
             return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
@@ -155,6 +157,15 @@ var getBatch = function(json) {
   return batch;
 };
 
+var buildBatchCode = function(code, extraCode, config) {
+  var finalCode = code + "\n" + extraCode + RETROCOMPATIBILITY_ALLOW_RECURSION;
+
+  if (!config.options.language || config.options.language === "es")
+    finalCode += RETROCOMPATIBILITY_ULTIMO;
+
+  return finalCode;
+}
+
 var makeBatchReport = function(report, initialBoard, extraBoard, mulangAst, finalBoardKey) {
   var result = {
     initialBoard: initialBoard,
@@ -166,6 +177,7 @@ var makeBatchReport = function(report, initialBoard, extraBoard, mulangAst, fina
 
   return report;
 }
+
 var abort = function(error) {
   report(error);
   process.exit();

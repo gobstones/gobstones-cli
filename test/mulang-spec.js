@@ -262,6 +262,6 @@ describe("gobstones - mulang", function() {
   it("marks with 'Other' the unsupported code", function() {
     var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } }");
 
-    code.should.eql(s("Other"));
+    code.tag.should.eql("Other");
   });
 });

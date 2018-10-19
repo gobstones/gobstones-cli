@@ -30,6 +30,10 @@ function unmatched(v) {
   throw new Error("unmatched value: " + JSON.stringify(v));
 }
 
+function other(v) {
+    return { tag: "Other", contents: JSON.stringify(v) };
+}
+
 //-----------------
 // Actual Parser --
 //-----------------
@@ -51,7 +55,7 @@ function parse(body) {
     return parseNode(body);
   }
 
-  unmatched(body);
+  return other(body);
 }
 
 function parseArray(f, array) {
@@ -114,15 +118,8 @@ function parseNode(node) {
     case "N_PatternWildcard":
       return reference("_");
 
-    case "N_DefInteractiveProgram":
-    case "N_StmtForeach":
-    case "N_PatternTimeout":
-    case "N_ExprRange":
-      // TODO: Implement
-      return s("Other");
-
     default:
-      unmatched(node);
+      return other(node);
   }
 }
 
