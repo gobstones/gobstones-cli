@@ -1,5 +1,10 @@
+function requireUncached(module){
+  delete require.cache[require.resolve(module)];
+  return require(module);
+}
+
 var loadBlockly = function(callback) {
-  if (global.Blockly) return callback();
+  if (global.Blockly && global.document) return callback();
 
   require("../../vendor/blockly_compressed");
   require("../../vendor/en");
@@ -11,13 +16,14 @@ var loadBlockly = function(callback) {
 
     require("../../vendor/blocks_compressed");
     require("proceds-blockly/proceds-blockly-original");
-    require("proceds-blockly/proceds-blockly");
+    requireUncached("proceds-blockly/proceds-blockly");
     window.initProcedsBlockly("Statement");
     require("gs-element-blockly/js/errors");
     require("gs-element-blockly/js/gobstones-blocks");
-    require("gs-element-blockly/js/gobstones-language-generator");
+    requireUncached("gs-element-blockly/js/gobstones-language-generator");
 
     callback();
+    window.close();
   });
 };
 

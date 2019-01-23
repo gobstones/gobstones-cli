@@ -480,6 +480,15 @@ describe("run", function() {
       );
     });
 
+    it("can accept a batch of Blockly's XML as code input", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml-multi.json");
+
+      output[0].status.should.eql("passed");
+      output[0].result.finalBoard.table.json[1][0].green.should.equal(2);
+      output[1].result.finalBoard.table.json[1][0].red.should.equal(3);
+      output[2].result.finalBoard.table.json[1][0].black.should.equal(2);
+    });
+
     it("can accept Blockly's XML in both code and extraCode, and supports primitive procedures", function() {
       var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-all-xml.json");
 
