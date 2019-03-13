@@ -71,7 +71,10 @@ function parseNode(node) {
       return s("Sequence", parse(contents));
 
     case "N_DefProgram":
-      return s("EntryPoint", ["program"].concat(parse(contents)));
+      return entryPointTag("program", parse(contents));
+
+    case "N_DefInteractiveProgram":
+      return parseInteractiveProgram(contents);
 
     case "N_DefFunction":
       return parseDeclaration("Function", contents);
@@ -137,6 +140,17 @@ function parseDeclaration(kind, contents) {
   return callable(kind, name, parameters, body);
 }
 
+function parseInteractiveProgram(contents) {
+  const switchContents = parseImplicitSwitch(contents);
+  return entryPointTag("interactiveProgram", switchContents);
+}
+
+function parseImplicitSwitch(contents) {
+  const branches = parseArray(parseSwitchBranch, contents);
+  const value = s("Reference", "pressedKey");
+  return switchTag(value, branches);
+}
+
 function parseParameter(string) {
   return s("VariablePattern", getString(string));
 }
@@ -144,7 +158,15 @@ function parseParameter(string) {
 function parseSwitch(contents) {
   var value = parse(contents[0]);
   var branches = parseArray(parseSwitchBranch, contents[1]);
-  return s("Switch", [value, branches]);
+  return switchTag(value, branches);
+}
+
+function switchTag(value, branches) {
+  return s("Switch", [value, branches, s("None")])
+}
+
+function entryPointTag(name, contents) {
+  return s("EntryPoint", [name].concat(contents));
 }
 
 function parseSwitchBranch(node) {

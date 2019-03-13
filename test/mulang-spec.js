@@ -9,7 +9,15 @@ var callable = mulang.callable;
 var reference = mulang.reference;
 
 function program(body) {
-  return s("EntryPoint", ["program", body]);
+  return entryPoint("program", body);
+}
+
+function interactiveProgram(body) {
+  return entryPoint("interactiveProgram", body)
+}
+
+function entryPoint(name, body) {
+  return s("EntryPoint", [name, body]);
 }
 var none = s("None");
 
@@ -213,7 +221,9 @@ describe("gobstones - mulang", function() {
       program(
         s("Switch", [
           s("MuSymbol", "Verde"),
-          [[s("MuSymbol", "Rojo"), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
+          [[s("MuSymbol", "Rojo"), s("Assignment", ["x", s("MuNumber", 4.0)])]],
+          s("None")
+        ]))
     );
   });
 
@@ -224,7 +234,9 @@ describe("gobstones - mulang", function() {
       program(
         s("Switch", [
           s("MuNumber", 5.0),
-          [[s("MuNumber", 3.0), s("Assignment", ["x", s("MuNumber", 4.0)])]]]))
+          [[s("MuNumber", 3.0), s("Assignment", ["x", s("MuNumber", 4.0)])]],
+          s("None")
+        ]))
     );
   });
 
@@ -259,9 +271,37 @@ describe("gobstones - mulang", function() {
     code.should.not.eql(s("Other"));
   });
 
-  it("marks with 'Other' the unsupported code", function() {
+  it("translates an empty interactive program", function() {
+    var code = gbs("interactive program { }");
+
+    code.should.eql(
+      interactiveProgram(
+        s("Switch", [
+          s("Reference", "pressedKey"),
+          [],
+          s("None")
+        ])
+      )
+    );
+  });
+
+  it("translates an interactive program", function() {
     var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } }");
 
-    code.tag.should.eql("Other");
+    code.should.eql(
+      interactiveProgram(
+        s("Switch", [
+          s("Reference", "pressedKey"),
+          [[
+            s("MuSymbol", "K_ENTER"),
+            s("Sequence", [
+              s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Rojo")]]),
+              s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Azul")]])
+            ])
+          ]],
+          s("None")
+        ])
+      )
+    );
   });
 });
