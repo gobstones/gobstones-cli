@@ -276,30 +276,47 @@ describe("gobstones - mulang", function() {
 
     code.should.eql(
       interactiveProgram(
-        s("Switch", [
-          s("Reference", "pressedKey"),
-          [],
-          s("None")
+        s("None")
+      )
+    );
+  });
+
+  it("translates a simple interactive program", function() {
+    var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } }");
+
+    code.should.eql(
+      interactiveProgram(
+        s("EntryPoint", [
+          "onKEnterPressed",
+          s("Sequence", [
+            s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Rojo")]]),
+            s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Azul")]])
+          ]),
         ])
       )
     );
   });
 
-  it("translates an interactive program", function() {
-    var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } }");
+  it("translates a complex interactive program", function() {
+    var code = gbs("interactive program { K_ENTER -> { Poner(Rojo) ; Poner(Azul) } \r\n K_A -> { Poner(Verde) } }");
 
     code.should.eql(
       interactiveProgram(
-        s("Switch", [
-          s("Reference", "pressedKey"),
-          [[
-            s("MuSymbol", "K_ENTER"),
+        s("Sequence", [
+          s("EntryPoint", [
+            "onKEnterPressed",
             s("Sequence", [
               s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Rojo")]]),
               s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Azul")]])
-            ])
-          ]],
-          s("None")
+            ]),
+          ]),
+          s("EntryPoint", [
+            "onKAPressed",
+            s("Sequence", [
+              s("Application", [s("Reference", "Poner"), [s("MuSymbol", "Verde")]])
+            ]),
+          ])
+
         ])
       )
     );
