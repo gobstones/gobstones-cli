@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 //-----------------
 // S-expressions --
 //-----------------
@@ -141,14 +143,21 @@ function parseDeclaration(kind, contents) {
 }
 
 function parseInteractiveProgram(contents) {
-  const switchContents = parseImplicitSwitch(contents);
-  return entryPointTag("interactiveProgram", switchContents);
+  const interactiveProgramContents = parseInteractiveProgramContents(contents);
+  return entryPointTag("interactiveProgram", interactiveProgramContents);
 }
 
-function parseImplicitSwitch(contents) {
+function parseInteractiveProgramContents(contents) {
   const branches = parseArray(parseSwitchBranch, contents);
-  const value = s("Reference", "pressedKey");
-  return switchTag(value, branches);
+  const interactiveProgramContents = branches.map((branch) => {
+    const keyBinding = toListenerName(branch[0].contents);
+    return entryPointTag(keyBinding, branch[1]);
+  });
+  return s("Sequence", interactiveProgramContents);
+}
+
+function toListenerName(key) {
+  return _.camelCase(`ON_${key}_PRESSED`)
 }
 
 function parseParameter(string) {
