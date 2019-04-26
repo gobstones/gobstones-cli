@@ -1,5 +1,9 @@
-function requireUncached(module){
-  delete require.cache[require.resolve(module)];
+const config = require("../config").getConfig();
+
+function requireUncached(module) {
+  if (config.batchSize > 1) {
+    delete require.cache[require.resolve(module)];
+  }
   return require(module);
 }
 

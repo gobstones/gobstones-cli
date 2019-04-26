@@ -26,6 +26,7 @@ module.exports = {
   "batch": function(config) {
     var json = getFile(config.options.batch);
     var batch = getBatch(json);
+    config.batchSize = batch.length;
 
     async.map(batch, function(it, callback) {
       var format = "all";
