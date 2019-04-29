@@ -26,31 +26,39 @@ module.exports = {
   "batch": function(config) {
     var json = getFile(config.options.batch);
     var batch = getBatch(json);
+    const example = batch[0];
+    const extraCode = _.trim(example.extraCode || "");
+    const code = example.code;
+    const originalCode = example.originalCode;
 
-    async.map(batch, function(it, callback) {
-      var format = "all";
+    var format = "all";
 
-      withCode(function(extraCode) {
-        var ast = interpreter.parse(extraCode);
+    withCode(function(extraCode) {
+      var ast = interpreter.parse(extraCode);
 
-        var computeDeclarations = function(type) {
-          var alias = type + "Declaration";
+      var computeDeclarations = function(type) {
+        var alias = type + "Declaration";
 
-          return ast.declarations.filter(function(it) {
-            return it.alias === alias;
-          }).map(function(it) {
-            return it.name;
-          });
-        }
+        return ast.declarations.filter(function(it) {
+          return it.alias === alias;
+        }).map(function(it) {
+          return it.name;
+        });
+      };
 
-        var teacherActions = {
-          primitiveProcedures: computeDeclarations("procedure"),
-          primitiveFunctions: computeDeclarations("function"),
-        };
+      var teacherActions = {
+        primitiveProcedures: computeDeclarations("procedure"),
+        primitiveFunctions: computeDeclarations("function"),
+      };
 
-        withCode(function(code) {
-          var finalCode = buildBatchCode(code, extraCode, config);
+      withCode(function(code) {
+        var mulangAst = safeRun(function() {
+          return JSON.parse(reporter.getMulangAst(originalCode || code));
+        });
 
+        var finalCode = buildBatchCode(code, extraCode, config);
+
+        async.map(batch, function(it, callback) {
           var initialBoard = safeRun(function() {
             return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
           }, abort);
@@ -60,21 +68,17 @@ module.exports = {
               return reporter.getBoardFromGbb(it.extraBoard, format);
             }, abort) : undefined;
 
-          var mulangAst = safeRun(function() {
-            return JSON.parse(reporter.getMulangAst(it.originalCode || code));
-          });
-
           safeRun(function() {
             var report = reporter.run(finalCode, it.initialBoard, format);
             return callback(null, makeBatchReport(report, initialBoard, extraBoard, mulangAst));
           }, function(error) {
             callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
           });
-        }, it.code, teacherActions);
-      }, _.trim(it.extraCode || ""));
-    }, function(err, results) {
-      report(err ? makeError(err) : results);
-    });
+        }, function(err, results) {
+          report(err ? makeError(err) : results);
+        })
+      }, code, teacherActions);
+    }, extraCode);
   },
 
   "run": function(config) {
@@ -104,17 +108,20 @@ module.exports = {
   }
 };
 
-var withCode = function(action, code, teacherActions) {
-  var finalCode = code;
+let readCode = function(code) {
   if (code !== "" && !code) {
-    finalCode = config.options.from_stdin
+    code = config.options.from_stdin
       ? fs.readFileSync("/dev/stdin").toString()
       : getFile(config.argv[0])
   }
+  return code;
+};
 
-  var isBlocklyCode = _.startsWith(finalCode, "<xml");
-  if (isBlocklyCode) blocklyCompiler.compile(finalCode, action, true, teacherActions);
-  else action(finalCode);
+var withCode = function(action, code, teacherActions, isExtra) {
+  code = readCode(code);
+  var isBlocklyCode = _.startsWith(code, "<xml");
+  if (isBlocklyCode) blocklyCompiler.compile(code, action, true, teacherActions, isExtra);
+  else action(code);
 };
 
 var getReport = function(code, initialBoard, format) {
