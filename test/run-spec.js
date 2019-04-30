@@ -264,24 +264,32 @@ describe("run", function() {
               }
             },
             "mulangAst": {
-              "tag": "EntryPoint",
+              "tag": "Procedure",
               "contents": [
-                "program",
-                {
-                  "tag": "Application",
-                  "contents": [
+                "A",
+                [
+                  [
+                    [],
                     {
-                      "tag": "Reference",
-                      "contents": "Mover"
-                    },
-                    [
-                      {
-                        "tag": "MuSymbol",
-                        "contents": "Norte"
+                      "tag": "UnguardedBody",
+                      "contents": {
+                        "tag": "Application",
+                        "contents": [
+                          {
+                            "tag": "Reference",
+                            "contents": "Poner"
+                          },
+                          [
+                            {
+                              "tag": "MuSymbol",
+                              "contents": "Negro"
+                            }
+                          ]
+                        ]
                       }
-                    ]
+                    }
                   ]
-                }
+                ]
               ]
             },
             "finalBoard": {
@@ -481,12 +489,14 @@ describe("run", function() {
     });
 
     it("can accept a batch of Blockly's XML as code input", function() {
-      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml-multi.json");
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml-multi-same-code.json");
 
       output[0].status.should.eql("passed");
       output[0].result.finalBoard.table.json[1][0].green.should.equal(2);
-      output[1].result.finalBoard.table.json[1][0].red.should.equal(3);
-      output[2].result.finalBoard.table.json[1][0].black.should.equal(2);
+      output[0].result.finalBoard.table.json[1][0].red.should.equal(1);
+      output[1].result.finalBoard.table.json[1][0].red.should.equal(2);
+      output[1].result.finalBoard.table.json[1][0].green.should.equal(2);
+      output[2].result.finalBoard.table.json[1][0].green.should.equal(3);
     });
 
     it("can accept Blockly's XML in both code and extraCode, and supports primitive procedures", function() {
@@ -504,6 +514,11 @@ describe("run", function() {
     it("batch fails with an incorrect language", function() {
       var output = exec("", "--format gbb --language xd --batch " + __dirname + "/fixture/batch.json");
       output.status.should.eql("all_is_broken_error");
+    });
+
+    it("batch doesn't work if empty", function() {
+      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch-empty.json");
+      output.status.should.eql("empty_batch");
     });
   });
 
