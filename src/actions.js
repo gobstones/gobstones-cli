@@ -27,6 +27,7 @@ module.exports = {
     var json = getFile(config.options.batch);
     var batch = getBatch(json);
     const example = batch[0];
+    if(!example) throw {status: "empty_batch"};
     const extraCode = _.trim(example.extraCode || "");
     const code = example.code;
     const originalCode = example.originalCode;

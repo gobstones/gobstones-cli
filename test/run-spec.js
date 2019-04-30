@@ -515,6 +515,11 @@ describe("run", function() {
       var output = exec("", "--format gbb --language xd --batch " + __dirname + "/fixture/batch.json");
       output.status.should.eql("all_is_broken_error");
     });
+
+    it("batch doesn't work if empty", function() {
+      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch-empty.json");
+      output.status.should.eql("empty_batch");
+    });
   });
 
 });
