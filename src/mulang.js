@@ -33,7 +33,7 @@ function unmatched(v) {
 }
 
 function other(v) {
-    return { tag: "Other", contents: JSON.stringify(v) };
+    return { tag: "Other", contents: [JSON.stringify(v), s("None")] };
 }
 
 //-----------------
