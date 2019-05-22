@@ -109,13 +109,12 @@ module.exports = {
   }
 };
 
-let readCode = function(code) {
-  if (code !== "" && !code) {
-    code = config.options.from_stdin
+var readCode = function(code) {
+  if (code != null) return code;
+
+  return config.options.from_stdin
       ? fs.readFileSync("/dev/stdin").toString()
-      : getFile(config.argv[0])
-  }
-  return code;
+      : getFile(config.argv[0]);
 };
 
 var withCode = function(action, code, teacherActions, isExtra) {
