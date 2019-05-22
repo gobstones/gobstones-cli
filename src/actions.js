@@ -24,15 +24,13 @@ module.exports = {
   },
 
   "batch": function(config) {
+    var FORMAT = "all";
+
     var json = getFile(config.options.batch);
     var batch = getBatch(json);
-    const example = batch[0];
-    if(!example) throw {status: "empty_batch"};
-    const extraCode = _.trim(example.extraCode || "");
-    const code = example.code;
-    const originalCode = example.originalCode;
+    var extraCode = _.trim(example.extraCode || "");
 
-    var format = "all";
+    // TODO: Seguir, mirando https://github.com/gobstones/gobstones-cli/pull/10/files
 
     withCode(function(extraCode) {
       var ast = interpreter.parse(extraCode);
@@ -61,16 +59,16 @@ module.exports = {
 
         async.map(batch, function(it, callback) {
           var initialBoard = safeRun(function() {
-            return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, format);
+            return reporter.getBoardFromGbb(it.initialBoard || DEFAULT_GBB, FORMAT);
           }, abort);
 
           var extraBoard = !_.isUndefined(it.extraBoard)
             ? safeRun(function() {
-              return reporter.getBoardFromGbb(it.extraBoard, format);
+              return reporter.getBoardFromGbb(it.extraBoard, FORMAT);
             }, abort) : undefined;
 
           safeRun(function() {
-            var report = reporter.run(finalCode, it.initialBoard, format);
+            var report = reporter.run(finalCode, it.initialBoard, FORMAT);
             return callback(null, makeBatchReport(report, initialBoard, extraBoard, mulangAst));
           }, function(error) {
             callback(null, makeBatchReport(error, initialBoard, extraBoard, mulangAst, "finalBoardError"));
@@ -144,22 +142,39 @@ var getFile = function(fileName) {
 };
 
 var getBatch = function(json) {
+  var crash = function(error) {
+    console.log(error);
+    process.exit(1);
+  };
+
   var batch;
   try {
     batch = JSON.parse(json);
   } catch (err) {
-    console.log("The batch file is not a valid json.");
-    process.exit(1);
+    crash("The batch file is not a valid json.");
   }
 
-  var requestsAreValid = _.every(batch, function(it) {
-    return (_.isNull(it.initialBoard) || _.isString(it.initialBoard)) && _.isString(it.code) && (_.isUndefined(it.extraBoard) || _.isString(it.extraBoard));
+  if (batch.extraCode != null && !_.isString(batch.extraCode))
+    crash("`extraCode` should be a string.");
+
+  if (!_.isArray(batch.requests))
+    crash("`requests` should be an array.");
+
+  var requestsAreValid = _.every(batch.requests, function(it) {
+    var hasCode = _.isString(it.code);
+    var hasOptionalOriginalCode = it.originalCode == null || _.isString(it.originalCode);
+    var hasExamples = _.isArray(it.examples);
+
+    return hasCode && hasOptionalOriginalCode && hasExamples && _.every(it.examples, function(it) {
+      const hasInitialBoard = _.isNull(it.initialBoard) || _.isString(it.initialBoard);
+      const hasOptionalExtraBoard = it.extraBoard == null || _.isString(it.extraBoard);
+
+      return hasInitialBoard && hasOptionalExtraBoard;
+    });
   });
 
-  if (!requestsAreValid) {
-    console.log("Some requests of the batch are invalid. The format is: { initialBoard, [extraBoard], code }.");
-    process.exit(1);
-  }
+  if (!requestsAreValid)
+    crash("Some requests of the batch are invalid.");
 
   return batch;
 };

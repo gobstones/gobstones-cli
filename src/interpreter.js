@@ -4,7 +4,7 @@ var _ = require("lodash");
 
 var interpreter = function() {
   var gobstonesApi = new GobstonesInterpreterApi();
-  const timeout = parseInt(globalOptions.timeout);
+  var timeout = parseInt(globalOptions.timeout);
 
   if (_.isFinite(timeout))
     gobstonesApi.config.setInfiniteLoopTimeout(timeout);

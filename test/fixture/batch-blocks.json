@@ -1,7 +1,13 @@
-[
-  {
-    "initialBoard": "GBB/1.0\nsize 2 2\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\nhead 0 0",
-    "extraBoard": "GBB/1.0\nsize 1 1\nhead 0 0",
-    "code": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><variables></variables><block type=\"Program\" id=\"a,~63L1XIWo3)V/cY/+o\" deletable=\"false\" x=\"30\" y=\"30\"><mutation timestamp=\"1521603193569\"></mutation><statement name=\"program\"><block type=\"Mover\" id=\"i*F01aFO~;09aW5SdG5:\"><value name=\"DIRECCION\"><block type=\"DireccionSelector\" id=\"!wG0GTdDFO,7h$j.|K+c\"><field name=\"DireccionDropdown\">Norte</field></block></value></block></statement></block></xml>"
-  }
-]
+{
+  "requests": [
+    {
+      "code": "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><variables></variables><block type=\"Program\" id=\"a,~63L1XIWo3)V/cY/+o\" deletable=\"false\" x=\"30\" y=\"30\"><mutation timestamp=\"1521603193569\"></mutation><statement name=\"program\"><block type=\"Mover\" id=\"i*F01aFO~;09aW5SdG5:\"><value name=\"DIRECCION\"><block type=\"DireccionSelector\" id=\"!wG0GTdDFO,7h$j.|K+c\"><field name=\"DireccionDropdown\">Norte</field></block></value></block></statement></block></xml>",
+      "examples": [
+        {
+          "initialBoard": "GBB/1.0\nsize 2 2\ncell 0 0 Azul 0 Negro 0 Rojo 1 Verde 0\nhead 0 0",
+          "extraBoard": "GBB/1.0\nsize 1 1\nhead 0 0"
+        }
+      ]
+    }
+  ]
+}
