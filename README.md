@@ -45,6 +45,8 @@ See [the tests](test/run-spec.js) for more examples!
 
 ### Batch run
 
+// TODO: Mover originalCode también al root
+
 `batch.json`:
 ```js
 {
