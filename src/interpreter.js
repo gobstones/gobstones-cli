@@ -45,6 +45,24 @@ function interpret(program, board) {
   return result;
 }
 
+
+function getActions(ast) {
+  var computeDeclarations = function(type) {
+    var alias = type + "Declaration";
+
+    return ast.declarations.filter(function(it) {
+      return it.alias === alias;
+    }).map(function(it) {
+      return it.name;
+    });
+  };
+
+  return {
+    primitiveProcedures: computeDeclarations("procedure"),
+    primitiveFunctions: computeDeclarations("function"),
+  };
+}
+
 function getAst(code) {
   return parse(code, "getAst");
 }
@@ -63,6 +81,7 @@ function buildGbb(board) {
 
 module.exports = {
   getAst: getAst,
+  getActions: getActions,
   parse: parse,
   parseProgram: parseProgram,
   interpret: interpret,

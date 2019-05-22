@@ -31,24 +31,11 @@ module.exports = {
     var extraCode = _.trim(example.extraCode || "");
 
     // TODO: Seguir, mirando https://github.com/gobstones/gobstones-cli/pull/10/files
+    // TODO: Mover async.map acá
 
     withCode(function(extraCode) {
       var ast = interpreter.parse(extraCode);
-
-      var computeDeclarations = function(type) {
-        var alias = type + "Declaration";
-
-        return ast.declarations.filter(function(it) {
-          return it.alias === alias;
-        }).map(function(it) {
-          return it.name;
-        });
-      };
-
-      var teacherActions = {
-        primitiveProcedures: computeDeclarations("procedure"),
-        primitiveFunctions: computeDeclarations("function"),
-      };
+      var teacherActions = interpreter.getActions(ast);
 
       withCode(function(code) {
         var mulangAst = safeRun(function() {
