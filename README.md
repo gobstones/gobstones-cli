@@ -46,7 +46,7 @@ See [the tests](test/run-spec.js) for more examples!
 ### Batch run
 
 `batch.json`:
-```json
+```js
 {
   "extraCode": "function a() { return (2) }", /* Teacher's code */
   "requests": [
