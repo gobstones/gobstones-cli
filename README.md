@@ -46,6 +46,7 @@ See [the tests](test/run-spec.js) for more examples!
 ### Batch run
 
 `batch.json`:
+
 ```js
 {
   "code": "procedure Meter(color) { Poner(color) }", // Student's code
@@ -58,7 +59,7 @@ See [the tests](test/run-spec.js) for more examples!
     },
     {
       "initialBoard": "GBB/1.0\nsize 4 4\nhead 0 0",
-      "extraBoard": "GBB/1.0\nsize 4 4\nhead 0 0"
+      "extraBoard": "GBB/1.0\nsize 4 4\nhead 0 0",
       "generatedCode": "program { Poner(Rojo) Poner(Verde) Poner(Negro) }"
     }
   ]

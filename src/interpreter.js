@@ -46,7 +46,9 @@ function interpret(program, board) {
 }
 
 
-function getActions(ast) {
+function getActions(code) {
+  var ast = parse(code);
+
   var computeDeclarations = function(type) {
     var alias = type + "Declaration";
 

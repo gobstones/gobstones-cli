@@ -41,6 +41,10 @@ reporter.getBoardFromGbb = function(gbb, format) {
   return this._buildBoard(board, format);
 };
 
+reporter.report = function(something) {
+  console.log(JSON.stringify(something, null, 2));
+};
+
 reporter._buildBoard = function(board, format) {
   board.table = this._getFormattedTable(board, format);
   return board;
