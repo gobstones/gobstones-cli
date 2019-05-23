@@ -4,7 +4,7 @@ var _ = require("lodash");
 
 var interpreter = function() {
   var gobstonesApi = new GobstonesInterpreterApi();
-  const timeout = parseInt(globalOptions.timeout);
+  var timeout = parseInt(globalOptions.timeout);
 
   if (_.isFinite(timeout))
     gobstonesApi.config.setInfiniteLoopTimeout(timeout);
@@ -45,6 +45,26 @@ function interpret(program, board) {
   return result;
 }
 
+
+function getActions(code) {
+  var ast = parse(code);
+
+  var computeDeclarations = function(type) {
+    var alias = type + "Declaration";
+
+    return ast.declarations.filter(function(it) {
+      return it.alias === alias;
+    }).map(function(it) {
+      return it.name;
+    });
+  };
+
+  return {
+    primitiveProcedures: computeDeclarations("procedure"),
+    primitiveFunctions: computeDeclarations("function"),
+  };
+}
+
 function getAst(code) {
   return parse(code, "getAst");
 }
@@ -63,6 +83,7 @@ function buildGbb(board) {
 
 module.exports = {
   getAst: getAst,
+  getActions: getActions,
   parse: parse,
   parseProgram: parseProgram,
   interpret: interpret,

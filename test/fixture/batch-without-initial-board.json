@@ -1,6 +1,6 @@
-[
-  {
-    "initialBoard": null,
-    "code": "program {\n Mover(Norte)\n }"
-  }
-]
+{
+  "code": "program {\n Mover(Norte)\n }",
+  "examples": [
+    { "initialBoard": null }
+  ]
+}

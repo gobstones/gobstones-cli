@@ -1,0 +1,13 @@
+{
+  "code": "procedure Meter(color) { Poner(color) }",
+  "examples": [
+    {
+      "initialBoard": "GBB/1.0\nsize 2 2\ncell 0 1 Azul 0 Negro 0 Rojo 1 Verde 0\nhead 0 0",
+      "generatedCode": "procedure Meter(color) { Poner(color) } \n program { Meter(Azul) }"
+    },
+    {
+      "initialBoard": "GBB/1.0\nsize 2 2\ncell 0 0 Azul 0 Negro 0 Rojo 0 Verde 0\nhead 0 0",
+      "generatedCode": "procedure Meter(color) { Poner(color) } \n program { Meter(Verde) }"
+    }
+  ]
+}

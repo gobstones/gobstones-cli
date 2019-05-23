@@ -218,7 +218,7 @@ describe("run", function() {
 
   describe("Batch execution", function() {
     it("returns a report with the result of each execution", function() {
-      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch.json");
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-basic.json");
 
       output.should.containDeepOrdered([
         {
@@ -232,16 +232,16 @@ describe("run", function() {
               "width": 2,
               "height": 2,
               "table": {
-                "gbb": "GBB/1.0\nsize 2 2\ncell 0 0 Rojo 1\nhead 0 0\n",
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 1 Rojo 1\nhead 0 0\n",
                 "json": [
-                  [
-                    {},
-                    {}
-                  ],
                   [
                     {
                       "red": 1
                     },
+                    {}
+                  ],
+                  [
+                    {},
                     {}
                   ]
                 ]
@@ -249,47 +249,71 @@ describe("run", function() {
             },
             "extraBoard": {
               "head": {
-                "x": 0,
-                "y": 0
+                "x": 1,
+                "y": 2
               },
-              "width": 1,
-              "height": 1,
+              "width": 3,
+              "height": 3,
               "table": {
-                "gbb": "GBB/1.0\nsize 1 1\nhead 0 0\n",
+                "gbb": "GBB/1.0\nsize 3 3\nhead 1 2\n",
                 "json": [
                   [
+                    {},
+                    {},
+                    {}
+                  ],
+                  [
+                    {},
+                    {},
+                    {}
+                  ],
+                  [
+                    {},
+                    {},
                     {}
                   ]
                 ]
               }
             },
             "mulangAst": {
-              "tag": "Procedure",
+              "tag": "EntryPoint",
               "contents": [
-                "A",
-                [
-                  [
-                    [],
+                "program",
+                {
+                  "tag": "Sequence",
+                  "contents": [
                     {
-                      "tag": "UnguardedBody",
-                      "contents": {
-                        "tag": "Application",
-                        "contents": [
+                      "tag": "Application",
+                      "contents": [
+                        {
+                          "tag": "Reference",
+                          "contents": "Mover"
+                        },
+                        [
                           {
-                            "tag": "Reference",
-                            "contents": "Poner"
-                          },
-                          [
-                            {
-                              "tag": "MuSymbol",
-                              "contents": "Negro"
-                            }
-                          ]
+                            "tag": "MuSymbol",
+                            "contents": "Norte"
+                          }
                         ]
-                      }
+                      ]
+                    },
+                    {
+                      "tag": "Application",
+                      "contents": [
+                        {
+                          "tag": "Reference",
+                          "contents": "Poner"
+                        },
+                        [
+                          {
+                            "tag": "MuSymbol",
+                            "contents": "Rojo"
+                          }
+                        ]
+                      ]
                     }
                   ]
-                ]
+                }
               ]
             },
             "finalBoard": {
@@ -300,16 +324,16 @@ describe("run", function() {
               "width": 2,
               "height": 2,
               "table": {
-                "gbb": "GBB/1.0\nsize 2 2\ncell 0 0 Rojo 1\nhead 0 1\n",
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 1 Rojo 2\nhead 0 1\n",
                 "json": [
                   [
-                    {},
+                    {
+                      "red": 2
+                    },
                     {}
                   ],
                   [
-                    {
-                      "red": 1
-                    },
+                    {},
                     {}
                   ]
                 ]
@@ -328,18 +352,21 @@ describe("run", function() {
                     "height": 2,
                     "table": [
                       [
-                        {},
-                        {}
-                      ],
-                      [
                         {
                           "red": 1
                         },
                         {}
+                      ],
+                      [
+                        {},
+                        {}
                       ]
                     ]
                   },
-                  "region": ""
+                  "region": "",
+                  "regionStack": [
+                    ""
+                  ]
                 },
                 {
                   "contextNames": [
@@ -354,18 +381,50 @@ describe("run", function() {
                     "height": 2,
                     "table": [
                       [
-                        {},
-                        {}
-                      ],
-                      [
                         {
                           "red": 1
                         },
                         {}
+                      ],
+                      [
+                        {},
+                        {}
                       ]
                     ]
                   },
-                  "region": ""
+                  "region": "",
+                  "regionStack": [
+                    ""
+                  ]
+                },
+                {
+                  "contextNames": [
+                    "program"
+                  ],
+                  "board": {
+                    "head": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "width": 2,
+                    "height": 2,
+                    "table": [
+                      [
+                        {
+                          "red": 2
+                        },
+                        {}
+                      ],
+                      [
+                        {},
+                        {}
+                      ]
+                    ]
+                  },
+                  "region": "",
+                  "regionStack": [
+                    ""
+                  ]
                 }
               ],
               "returnValue": null
@@ -383,43 +442,53 @@ describe("run", function() {
               "width": 1,
               "height": 1,
               "table": {
-                "gbb": "GBB/1.0\nsize 1 1\ncell 0 0 Rojo 1\nhead 0 0\n",
+                "gbb": "GBB/1.0\nsize 1 1\nhead 0 0\n",
                 "json": [
                   [
-                    {
-                      "red": 1
-                    }
+                    {}
                   ]
                 ]
               }
             },
             "mulangAst": {
-              "tag": "Procedure",
+              "tag": "EntryPoint",
               "contents": [
-                "A",
-                [
-                  [
-                    [],
+                "program",
+                {
+                  "tag": "Sequence",
+                  "contents": [
                     {
-                      "tag": "UnguardedBody",
-                      "contents": {
-                        "tag": "Application",
-                        "contents": [
+                      "tag": "Application",
+                      "contents": [
+                        {
+                          "tag": "Reference",
+                          "contents": "Mover"
+                        },
+                        [
                           {
-                            "tag": "Reference",
-                            "contents": "Poner"
-                          },
-                          [
-                            {
-                              "tag": "MuSymbol",
-                              "contents": "Negro"
-                            }
-                          ]
+                            "tag": "MuSymbol",
+                            "contents": "Norte"
+                          }
                         ]
-                      }
+                      ]
+                    },
+                    {
+                      "tag": "Application",
+                      "contents": [
+                        {
+                          "tag": "Reference",
+                          "contents": "Poner"
+                        },
+                        [
+                          {
+                            "tag": "MuSymbol",
+                            "contents": "Rojo"
+                          }
+                        ]
+                      ]
                     }
                   ]
-                ]
+                }
               ]
             },
             "finalBoardError": {
@@ -433,15 +502,18 @@ describe("run", function() {
               "on": {
                 "range": {
                   "start": {
-                    "row": 2,
-                    "column": 2
+                    "row": 1,
+                    "column": 11
                   },
                   "end": {
-                    "row": 2,
-                    "column": 13
+                    "row": 1,
+                    "column": 22
                   }
                 },
-                "region": ""
+                "region": "",
+                "regionStack": [
+                  ""
+                ]
               },
               "snapshots": [
                 {
@@ -457,15 +529,195 @@ describe("run", function() {
                     "height": 1,
                     "table": [
                       [
-                        {
-                          "red": 1
-                        }
+                        {}
                       ]
                     ]
                   },
-                  "region": ""
+                  "region": "",
+                  "regionStack": [
+                    ""
+                  ]
                 }
               ]
+            }
+          }
+        }
+      ]);
+    });
+
+    it("supports custom generatedCode in batches, generates an AST based on the original code only", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-full.json");
+
+      output.should.containDeepOrdered([
+        {
+          "status": "passed",
+          "result": {
+            "initialBoard": {
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 2,
+              "height": 2,
+              "table": {
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 1 Rojo 1\nhead 0 0\n",
+                "json": [
+                  [
+                    {
+                      "red": 1
+                    },
+                    {}
+                  ],
+                  [
+                    {},
+                    {}
+                  ]
+                ]
+              }
+            },
+            "mulangAst": {
+              "tag": "Procedure",
+              "contents": [
+                "Meter",
+                [
+                  [
+                    [
+                      {
+                        "tag": "VariablePattern",
+                        "contents": "color"
+                      }
+                    ],
+                    {
+                      "tag": "UnguardedBody",
+                      "contents": {
+                        "tag": "Application",
+                        "contents": [
+                          {
+                            "tag": "Reference",
+                            "contents": "Poner"
+                          },
+                          [
+                            {
+                              "tag": "Reference",
+                              "contents": "color"
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  ]
+                ]
+              ]
+            },
+            "finalBoard": {
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 2,
+              "height": 2,
+              "table": {
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 0 Azul 1\ncell 0 1 Rojo 1\nhead 0 0\n",
+                "json": [
+                  [
+                    {
+                      "red": 1
+                    },
+                    {}
+                  ],
+                  [
+                    {
+                      "blue": 1
+                    },
+                    {}
+                  ]
+                ]
+              },
+              "returnValue": null
+            }
+          }
+        },
+        {
+          "status": "passed",
+          "result": {
+            "initialBoard": {
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 2,
+              "height": 2,
+              "table": {
+                "gbb": "GBB/1.0\nsize 2 2\nhead 0 0\n",
+                "json": [
+                  [
+                    {},
+                    {}
+                  ],
+                  [
+                    {},
+                    {}
+                  ]
+                ]
+              }
+            },
+            "mulangAst": {
+              "tag": "Procedure",
+              "contents": [
+                "Meter",
+                [
+                  [
+                    [
+                      {
+                        "tag": "VariablePattern",
+                        "contents": "color"
+                      }
+                    ],
+                    {
+                      "tag": "UnguardedBody",
+                      "contents": {
+                        "tag": "Application",
+                        "contents": [
+                          {
+                            "tag": "Reference",
+                            "contents": "Poner"
+                          },
+                          [
+                            {
+                              "tag": "Reference",
+                              "contents": "color"
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  ]
+                ]
+              ]
+            },
+            "finalBoard": {
+              "head": {
+                "x": 0,
+                "y": 0
+              },
+              "width": 2,
+              "height": 2,
+              "table": {
+                "gbb": "GBB/1.0\nsize 2 2\ncell 0 0 Verde 1\nhead 0 0\n",
+                "json": [
+                  [
+                    {},
+                    {}
+                  ],
+                  [
+                    {
+                      "green": 1
+                    },
+                    {}
+                  ]
+                ]
+              },
+              "returnValue": null
             }
           }
         }
@@ -480,7 +732,7 @@ describe("run", function() {
     });
 
     it("can accept Blockly's XML as code input and compile it with region ids", function() {
-      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-blocks.json");
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml.json");
 
       output[0].status.should.eql("passed");
       output[0].result.finalBoard.snapshots[0].regionStack.should.eql(
@@ -488,8 +740,8 @@ describe("run", function() {
       );
     });
 
-    it("can accept a batch of Blockly's XML as code input", function() {
-      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml-multi-same-code.json");
+    it("can accept a batch of Blockly's XML with multiple boards", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml-multiple-boards.json");
 
       output[0].status.should.eql("passed");
       output[0].result.finalBoard.table.json[1][0].green.should.equal(2);
@@ -500,25 +752,26 @@ describe("run", function() {
     });
 
     it("can accept Blockly's XML in both code and extraCode, and supports primitive procedures", function() {
-      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-all-xml.json");
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml-with-extra.json");
 
       output[0].status.should.eql("passed");
       output[0].result.finalBoard.table.json[1][0].green.should.equal(2);
     });
 
     it("batch works as expected with a correct language", function() {
-      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch.json");
+      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch-basic.json");
       output[0].status.should.eql("passed");
     });
 
     it("batch fails with an incorrect language", function() {
-      var output = exec("", "--format gbb --language xd --batch " + __dirname + "/fixture/batch.json");
+      var output = exec("", "--format gbb --language xd --batch " + __dirname + "/fixture/batch-basic.json");
       output.status.should.eql("all_is_broken_error");
     });
 
-    it("batch doesn't work if empty", function() {
-      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch-empty.json");
-      output.status.should.eql("empty_batch");
+    it("batch doesn't work if incomplete", function() {
+      var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch-incomplete.json");
+      output.status.should.eql("batch_error");
+      output.result.should.eql("`code` should be a string.");
     });
   });
 

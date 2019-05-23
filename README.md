@@ -45,23 +45,29 @@ See [the tests](test/run-spec.js) for more examples!
 
 ### Batch run
 
-`request.json`:
-```json
-[
-  {
-    "initialBoard": "GBB...",
-    "originalCode": "procedure A() { ...",
-    "code": "program { ..."
-  },
-  {
-    "initialBoard": "GBB...",
-    "code": "program { ..."
-  },
-]
+`batch.json`:
+
+```js
+{
+  "code": "procedure Meter(color) { Poner(color) }", // Student's code
+  "extraCode": "function a() { return (2) }", // [OPTIONAL] Teacher's code
+  "examples": [
+    {
+      "initialBoard": "GBB/1.0\nsize 4 4\nhead 0 0", // Initial board
+      "extraBoard": "GBB/1.0\nsize 4 4\nhead 0 0", // [OPTIONAL] Expected board
+      "generatedCode": "procedure Meter(color) { Poner(color) } program { Meter(Azul) }" // [OPTIONAL] Code to be executed, overrides `code`
+    },
+    {
+      "initialBoard": "GBB/1.0\nsize 4 4\nhead 0 0",
+      "extraBoard": "GBB/1.0\nsize 4 4\nhead 0 0",
+      "generatedCode": "program { Poner(Rojo) Poner(Verde) Poner(Negro) }"
+    }
+  ]
+}
 ```
 
 ```bash
-gobstones-cli --batch request.json
+gobstones-cli --batch batch.json
 # returns an array with the responses
 ```
 
