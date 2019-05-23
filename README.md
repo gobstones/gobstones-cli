@@ -45,26 +45,21 @@ See [the tests](test/run-spec.js) for more examples!
 
 ### Batch run
 
-// TODO: Mover originalCode también al root
-
 `batch.json`:
 ```js
 {
-  "extraCode": "function a() { return (2) }", /* Teacher's code */
-  "requests": [
+  "code": "procedure Meter(color) { Poner(color) }", // Student's code
+  "extraCode": "function a() { return (2) }", // [OPTIONAL] Teacher's code
+  "examples": [
     {
-      "code": "program 1 { ...", /* Code to be executed */
-      "originalCode": "procedure A() { ...", /* Original student's code (for AST computation) */
-      "examples": [ /* Boards */
-        { "initialBoard": "GBB 1...", "extraBoard": "GBB 1..." },
-        { "initialBoard": "GBB 2...", "extraBoard": "GBB 2..." }
-      ]
+      "initialBoard": "GBB/1.0\nsize 4 4\nhead 0 0", // Initial board
+      "extraBoard": "GBB/1.0\nsize 4 4\nhead 0 0", // [OPTIONAL] Expected board
+      "generatedCode": "procedure Meter(color) { Poner(color) } program { Meter(Azul) }" // [OPTIONAL] Code to be executed, overrides `code`
     },
     {
-      "code": "program 2 { ...",
-      "examples": [
-        { "initialBoard": "GBB..." }
-      ]
+      "initialBoard": "GBB/1.0\nsize 4 4\nhead 0 0",
+      "extraBoard": "GBB/1.0\nsize 4 4\nhead 0 0"
+      "generatedCode": "program { Poner(Rojo) Poner(Verde) Poner(Negro) }"
     }
   ]
 }

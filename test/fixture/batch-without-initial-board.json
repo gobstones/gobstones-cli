@@ -1,8 +1,6 @@
 {
-  "requests": [
-    {
-      "code": "program {\n Mover(Norte)\n }",
-      "examples": [ { "initialBoard": null } ]
-    }
+  "code": "program {\n Mover(Norte)\n }",
+  "examples": [
+    { "initialBoard": null }
   ]
 }
