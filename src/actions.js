@@ -6,8 +6,6 @@ var safeRun = require("./safe-run");
 var fs = require("fs");
 var _ = require("lodash");
 
-var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
-
 module.exports = {
   "ast": function(config) {
     withCode(function(code) {
@@ -92,14 +90,20 @@ var getFile = function(fileName) {
   try {
     return require("fs").readFileSync(fileName).toString();
   } catch (err) {
-    console.log("The file " + (fileName || "?") + " must exist.");
+    reporter.report({
+      status: "file_not_found",
+      result: "The file " + (fileName || "?") + " must exist."
+    })
     process.exit(1);
   }
 };
 
 var getBatch = function(json) {
   var crash = function(error) {
-    console.log(error);
+    reporter.report({
+      status: "batch_error",
+      result: error
+    });
     process.exit(1);
   };
 

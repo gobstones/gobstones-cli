@@ -4,6 +4,7 @@ var async = require("async");
 var _ = require("lodash");
 
 var FORMAT = "all";
+var DEFAULT_GBB = "GBB/1.0\nsize 4 4\nhead 0 0";
 var RETROCOMPATIBILITY_ALLOW_RECURSION = "\n/*@LANGUAGE@AllowRecursion@*/";
 var RETROCOMPATIBILITY_ULTIMO = "\nfunction ultimo(list) { return (último(list)) }";
 
@@ -57,5 +58,5 @@ var makeBatchReport = function(report, initialBoard, extraBoard, mulangAst, fina
 
 var abort = function(error) {
   reporter.report(error);
-  process.exit();
+  process.exit(1);
 };
