@@ -18,14 +18,6 @@ describe("run", function() {
       });
     });
 
-    it("should include the snapshots", function() {
-      var output = exec("program { Mover(Norte) ; Mover(Este) ; Mover(Norte) }");
-      output.result.snapshots[0].board.head.should.eql({ x: 0, y: 0 });
-      output.result.snapshots[1].board.head.should.eql({ x: 0, y: 1 });
-      output.result.snapshots[2].board.head.should.eql({ x: 1, y: 1 });
-      output.result.snapshots[3].board.head.should.eql({ x: 1, y: 2 });
-    });
-
     it("should inform the exit status of a program", function() {
       var output = exec("program {\nreturn(8)\n}");
       output.result.returnValue.should.eql({
@@ -338,95 +330,6 @@ describe("run", function() {
                   ]
                 ]
               },
-              "snapshots": [
-                {
-                  "contextNames": [
-                    "program"
-                  ],
-                  "board": {
-                    "head": {
-                      "x": 0,
-                      "y": 0
-                    },
-                    "width": 2,
-                    "height": 2,
-                    "table": [
-                      [
-                        {
-                          "red": 1
-                        },
-                        {}
-                      ],
-                      [
-                        {},
-                        {}
-                      ]
-                    ]
-                  },
-                  "region": "",
-                  "regionStack": [
-                    ""
-                  ]
-                },
-                {
-                  "contextNames": [
-                    "program"
-                  ],
-                  "board": {
-                    "head": {
-                      "x": 0,
-                      "y": 1
-                    },
-                    "width": 2,
-                    "height": 2,
-                    "table": [
-                      [
-                        {
-                          "red": 1
-                        },
-                        {}
-                      ],
-                      [
-                        {},
-                        {}
-                      ]
-                    ]
-                  },
-                  "region": "",
-                  "regionStack": [
-                    ""
-                  ]
-                },
-                {
-                  "contextNames": [
-                    "program"
-                  ],
-                  "board": {
-                    "head": {
-                      "x": 0,
-                      "y": 1
-                    },
-                    "width": 2,
-                    "height": 2,
-                    "table": [
-                      [
-                        {
-                          "red": 2
-                        },
-                        {}
-                      ],
-                      [
-                        {},
-                        {}
-                      ]
-                    ]
-                  },
-                  "region": "",
-                  "regionStack": [
-                    ""
-                  ]
-                }
-              ],
               "returnValue": null
             }
           }
@@ -514,31 +417,7 @@ describe("run", function() {
                 "regionStack": [
                   ""
                 ]
-              },
-              "snapshots": [
-                {
-                  "contextNames": [
-                    "program"
-                  ],
-                  "board": {
-                    "head": {
-                      "x": 0,
-                      "y": 0
-                    },
-                    "width": 1,
-                    "height": 1,
-                    "table": [
-                      [
-                        {}
-                      ]
-                    ]
-                  },
-                  "region": "",
-                  "regionStack": [
-                    ""
-                  ]
-                }
-              ]
+              }
             }
           }
         }
@@ -735,9 +614,6 @@ describe("run", function() {
       var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-xml.json");
 
       output[0].status.should.eql("passed");
-      output[0].result.finalBoard.snapshots[0].regionStack.should.eql(
-        ["!wG0GTdDFO,7h$j.|K+c"]
-      );
     });
 
     it("can accept a batch of Blockly's XML with multiple boards", function() {
@@ -772,6 +648,11 @@ describe("run", function() {
       var output = exec("", "--format gbb --language es --batch " + __dirname + "/fixture/batch-incomplete.json");
       output.status.should.eql("batch_error");
       output.result.should.eql("`code` should be a string.");
+    });
+
+    it("batch works with long program", function() {
+      var output = exec("", "--format gbb --batch " + __dirname + "/fixture/batch-long-running.json");
+      output[0].status.should.eql("passed");
     });
   });
 
